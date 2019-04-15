@@ -15,9 +15,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+Route::get('/admin/advisers', 'AdminController@advisers');
+Route::post('/admin/advisers', 'AdminController@advisersUpload');
+//Route::get('/admin/advisers/update', 'AdminController@advisersUpdate');
+//Route::get('/admin/advisers/remove', 'AdminController@advisersRemove');
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/admin/students', 'AdminController@students');
+Route::post('/admin/students', 'AdminController@studentsUpload');
 
-Route::get('/redirect', 'Auth\LoginController@redirectToProvider');
+//Auth::routes();
+
+Route::get('/login', 'Auth\LoginController@redirectToProvider');
+Route::get('/logout', 'Auth\LoginController@logout');
 Route::get('/callback', 'Auth\LoginController@handleProviderCallback');

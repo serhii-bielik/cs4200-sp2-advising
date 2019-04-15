@@ -6,6 +6,10 @@
 
         <title>Laravel</title>
 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
 
@@ -45,7 +49,7 @@
             }
 
             .title {
-                font-size: 84px;
+                font-size: 52px;
             }
 
             .links > a {
@@ -66,32 +70,31 @@
     <body>
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
 
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
-                        @endif
-                    @endauth
-                </div>
             @endif
 
             <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
 
-                <div class="links">
-                    <a href="https://laravel.com/docs">Docs</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://blog.laravel.com">Blog</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                @if(session('message'))
+                    <p class="alert {{ session('alert-class', 'alert-info') }} alert-dismissible">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <strong>{{ session('message') }}</strong>
+                    </p>
+                @endif
+
+                <div class="title m-b-md">
+                    Advising Scheduling System
+                </div>
+                <div class="text-center">
+                    @auth
+                        <a href="{{ url('/logout') }}" class="btn btn-default btn-lg">
+                            <span class="glyphicon glyphicon-log-out"></span> Logout
+                        </a>
+                    @else
+                        <a href="{{ url('/login') }}" class="btn btn-default btn-lg">
+                            <span class="glyphicon glyphicon-log-in"></span> Login
+                        </a>
+                    @endauth
                 </div>
             </div>
         </div>
