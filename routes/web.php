@@ -15,6 +15,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/director/faculties', 'DirectorController@faculties');
+Route::get('/director/advisers', 'DirectorController@advisers');
+Route::get('/director/students', 'DirectorController@students');
+Route::post('/director/assign', 'DirectorController@assign');
+Route::post('/director/dismiss', 'DirectorController@dismiss');
+
+Route::get('/adviser', 'AdviserController@dashboard');
+Route::get('/adviser/students', 'AdviserController@students');
+
 Route::get('/admin/advisers', 'AdminController@advisers');
 Route::post('/admin/advisers', 'AdminController@advisersUpload');
 //Route::get('/admin/advisers/update', 'AdminController@advisersUpdate');

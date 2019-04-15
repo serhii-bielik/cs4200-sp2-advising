@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use phpDocumentor\Reflection\Types\Integer;
 
 class User extends Authenticatable
 {
@@ -27,7 +28,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'google_id'
     ];
 
     /**
@@ -38,4 +39,35 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function addStudents(Array $students, $adviserId)
+    {
+        foreach ($students as $studentId) {
+            $isAssigned = AdviserAdvisee::where('adviser_id', $adviserId)
+                ->where('advisee_id', $studentId)->first();
+            if (!isset($isAssigned)) {
+                AdviserAdvisee::create([
+                   'adviser_id' => $adviserId,
+                   'advisee_id' => $studentId,
+                   'director_id' => auth()->user()->id,
+                ]);
+            }
+        }
+    }
+
+    public function dismissStudents(Array $students, $adviserId)
+    {
+        foreach ($students as $studentId) {
+            $isAssigned = AdviserAdvisee::where('adviser_id', $adviserId)
+                ->where('advisee_id', $studentId)->first();
+            if (isset($isAssigned)) {
+                $isAssigned->delete();
+            }
+        }
+    }
+
+    public function students()
+    {
+        return $this->belongsToMany('App\User', 'adviser_advisee', 'adviser_id', 'advisee_id');
+    }
 }
