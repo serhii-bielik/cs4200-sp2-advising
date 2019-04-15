@@ -14,11 +14,24 @@
 
 <div class="container">
     <h1>Adviser dashboard</h1>
+
+    <p>Place here your front end app for <strong>adviser/director</strong>: <strong>/resources/views/adviser/dashboard.blade.php</strong>
+        <br>Js is here: <strong>/public/js/</strong></p>
+
     <div id="app">
         <p>@{{ message }}</p>
         <button v-on:click="assignStudents">Assign Students</button>
         <button v-on:click="dismissStudents">Dismiss Students</button>
     </div>
+
+    <hr>
+    <p>So far the is no groups checked. If you login you can access everything.</p>
+    <p>
+        <a href="/admin/advisers">Admin Panel</a><br>
+        <a href="/adviser">Adviser Panel</a><br>
+        <a href="/student">Student Panel</a><br>
+        <a href="/logout">Logout</a><br>
+    </p>
 </div>
 <script>
     var app5 = new Vue({
