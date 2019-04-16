@@ -23,8 +23,21 @@ Route::post('/director/dismiss', 'DirectorController@dismiss');
 
 Route::get('/adviser', 'AdviserController@dashboard');
 Route::get('/adviser/students', 'AdviserController@students');
+Route::get('/adviser/interval', 'AdviserController@getInterval');
+Route::post('/adviser/interval', 'AdviserController@setInterval');
+Route::get('/adviser/notification', 'AdviserController@getNotification');
+Route::post('/adviser/notification', 'AdviserController@setNotification');
+Route::get('/adviser/messages/{studentID}', 'AdviserController@messages');
+Route::post('/adviser/messages', 'AdviserController@addMessage');
 
 Route::get('/student', 'StudentController@dashboard');
+Route::get('/student/note', 'StudentController@note');
+Route::get('/student/adviser', 'StudentController@adviser');
+Route::get('/student/info', 'StudentController@info');
+Route::get('/student/notification', 'StudentController@getNotification');
+Route::post('/student/notification', 'StudentController@setNotification');
+Route::get('/student/messages', 'StudentController@messages');
+Route::post('/student/messages', 'StudentController@addMessage');
 
 Route::get('/admin/advisers', 'AdminController@advisers');
 Route::post('/admin/advisers', 'AdminController@advisersUpload');
