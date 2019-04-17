@@ -79,6 +79,34 @@ class User extends Authenticatable
         return $this->hasMany('App\PublicNote', 'advisee_id')->orderByDesc('id')->limit(1);
     }
 
+    public function publicNotes()
+    {
+        return $this->hasMany('App\PublicNote', 'advisee_id')->orderByDesc('id');
+    }
+
+    public function addPublicNote($studentId, $note)
+    {
+        PublicNote::create([
+            'advisee_id' => $studentId,
+            'created_by' => $this->id,
+            'note' => $note,
+        ]);
+    }
+
+    public function addPrivateNote($studentId, $note)
+    {
+        PrivateNote::create([
+            'advisee_id' => $studentId,
+            'created_by' => $this->id,
+            'note' => $note,
+        ]);
+    }
+
+    public function privateNotes()
+    {
+        return $this->hasMany('App\PrivateNote', 'advisee_id')->orderByDesc('id');
+    }
+
     public function studentAdviser()
     {
         return $this->belongsToMany('App\User', 'adviser_advisee', 'advisee_id', 'adviser_id')

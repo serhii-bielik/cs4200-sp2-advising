@@ -33,6 +33,10 @@
 
         <p>@{{ chat }}</p>
         <button v-on:click="addMessage">Add test message</button>
+
+        <p>@{{ note }}</p>
+        <button v-on:click="addPublicNote">Add Public Note</button>
+        <button v-on:click="addPrivateNote">Add Private Note</button>
     </div>
 
     <hr>
@@ -52,6 +56,7 @@
             chat: '',
             notification: '',
             interval: '',
+            note: '',
         },
         methods: {
             assignStudents: function () {
@@ -108,6 +113,20 @@
                 axios.post('/adviser/messages',{
                     data: { studentId: 355, message: 'Lorem ipsum dollar emet 222.' }
                 }).then(response => this.chat = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            addPublicNote: function () {
+                axios.post('/adviser/notes/public',{
+                    data: { studentId: 355, note: 'Public Note TESTTT' }
+                }).then(response => this.note = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            addPrivateNote: function () {
+                axios.post('/adviser/notes/private',{
+                    data: { studentId: 355, note: 'Private Note TESTTT' }
+                }).then(response => this.note = response.data)
                     .catch(error => console.error(error));
             },
         }

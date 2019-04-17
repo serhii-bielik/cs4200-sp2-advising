@@ -27,8 +27,12 @@ Route::get('/adviser/interval', 'AdviserController@getInterval');
 Route::post('/adviser/interval', 'AdviserController@setInterval');
 Route::get('/adviser/notification', 'AdviserController@getNotification');
 Route::post('/adviser/notification', 'AdviserController@setNotification');
-Route::get('/adviser/messages/{studentID}', 'AdviserController@messages');
+Route::get('/adviser/messages/{studentId}', 'AdviserController@messages');
 Route::post('/adviser/messages', 'AdviserController@addMessage');
+Route::get('/adviser/notes/public/{studentId}', 'AdviserController@getPublicNotes');
+Route::post('/adviser/notes/public', 'AdviserController@addPublicNote');
+Route::get('/adviser/notes/private/{studentId}', 'AdviserController@getPrivateNotes');
+Route::post('/adviser/notes/private', 'AdviserController@addPrivateNote');
 
 Route::get('/student', 'StudentController@dashboard');
 Route::get('/student/note', 'StudentController@note');

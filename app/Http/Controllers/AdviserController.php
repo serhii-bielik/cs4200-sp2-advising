@@ -73,7 +73,7 @@ class AdviserController extends Controller
         $this->isAdviser();
 
         $adviser = auth()->user();
-        $studentId = intval(request('studentID'));
+        $studentId = intval(request('studentId'));
 
         $data = $adviser->messages($studentId, $adviser->id);
 
@@ -101,5 +101,45 @@ class AdviserController extends Controller
         }
 
         return $data;
+    }
+
+    public function getPublicNotes()
+    {
+        $this->isAdviser();
+
+        $studentId = intval(request('studentId'));
+        return User::where('id', $studentId)->first()->publicNotes;
+    }
+
+    public function addPublicNote()
+    {
+        $this->isAdviser();
+
+        $studentId = intval(request('data.studentId'));
+        $note = request('data.note');
+
+        auth()->user()->addPublicNote($studentId, $note);
+
+        return User::where('id', $studentId)->first()->publicNotes;
+    }
+
+    public function getPrivateNotes()
+    {
+        $this->isAdviser();
+
+        $studentId = intval(request('studentId'));
+        return User::where('id', $studentId)->first()->privateNotes;
+    }
+
+    public function addPrivateNote()
+    {
+        $this->isAdviser();
+
+        $studentId = intval(request('data.studentId'));
+        $note = request('data.note');
+
+        auth()->user()->addPrivateNote($studentId, $note);
+
+        return User::where('id', $studentId)->first()->privateNotes;
     }
 }
