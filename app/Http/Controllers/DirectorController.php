@@ -11,8 +11,12 @@ class DirectorController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        // TODO: Check group id
-        //abort_unless(auth()->user()->group_id == UserGroup::Admin, 403);
+    }
+
+    private function isDirector()
+    {
+        abort_unless(auth()->user()->group_id == UserGroup::Director,
+            403, "You must login under director account in order to use this API");
     }
 
     public function faculties()
@@ -22,17 +26,23 @@ class DirectorController extends Controller
 
     public function students()
     {
+        $this->isDirector();
+
         return User::where('group_id', UserGroup::Student)->get();
     }
 
     public function advisers()
     {
+        $this->isDirector();
+
         return User::where('group_id', UserGroup::Adviser)
             ->orWhere('group_id', UserGroup::Director)->get();
     }
 
     public function assign()
     {
+        $this->isDirector();
+
         //TODO: Validation
         $adviserId = intval(request('data.adviser'));
         $adviser = User::where('id', $adviserId)->first();
@@ -47,6 +57,8 @@ class DirectorController extends Controller
 
     public function dismiss()
     {
+        $this->isDirector();
+
         //TODO: Validation
         $adviserId = intval(request('data.adviser'));
         $adviser = User::where('id', $adviserId)->first();
