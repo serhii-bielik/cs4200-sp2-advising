@@ -37,6 +37,9 @@
         <p>@{{ note }}</p>
         <button v-on:click="addPublicNote">Add Public Note</button>
         <button v-on:click="addPrivateNote">Add Private Note</button>
+
+        <p>@{{ period }}</p>
+        <button v-on:click="addPeriod">Add Period (Director API)</button>
     </div>
 
     <hr>
@@ -57,6 +60,7 @@
             notification: '',
             interval: '',
             note: '',
+            period: '',
         },
         methods: {
             assignStudents: function () {
@@ -127,6 +131,13 @@
                 axios.post('/adviser/notes/private',{
                     data: { studentId: 355, note: 'Private Note TESTTT' }
                 }).then(response => this.note = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            addPeriod: function () {
+                axios.post('/director/periods',{
+                    data: { startDate: '2019-07-15', endDate: '2019-07-25' }
+                }).then(response => this.period = response.data)
                     .catch(error => console.error(error));
             },
         }

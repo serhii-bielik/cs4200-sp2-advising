@@ -2,6 +2,7 @@
 
 namespace App;
 
+use DateTime;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -148,6 +149,31 @@ class User extends Authenticatable
             'chat_id' => $chatId,
             'sender_id' => $this->id,
             'content' => $message,
+        ]);
+    }
+
+    public function addPeriod($startDate, $endDate)
+    {
+        $date = DateTime::createFromFormat('Y-m-d', $startDate);
+
+        $year = intval($date->format('Y'));
+        $semester = 1;
+
+        $month = intval($date->format('n'));
+        if ($month >= 1 && $month <= 5) {
+            $semester = 2;
+            $year--;
+        } else if ($month >= 6 && $month <= 7) {
+            $semester = 3;
+            $year--;
+        }
+
+        Period::create([
+            'director_id' => $this->id,
+            'semester' => $semester,
+            'year' => $year,
+            'start_date' => $startDate,
+            'end_date' => $endDate
         ]);
     }
 }

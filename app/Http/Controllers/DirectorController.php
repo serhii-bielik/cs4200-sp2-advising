@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Faculty;
+use App\Period;
 use App\User;
 use App\UserGroup;
 
@@ -69,5 +70,25 @@ class DirectorController extends Controller
         $adviser->dismissStudents(request('data.students'), $adviserId);
 
         return $adviser->students;
+    }
+
+    public function periods()
+    {
+        $this->isDirector();
+
+        return Period::get();
+    }
+
+    public function addPeriod()
+    {
+        $this->isDirector();
+
+        $director = auth()->user();
+        $startDate = request('data.startDate');
+        $endDate = request('data.endDate');
+
+        $director->addPeriod($startDate, $endDate);
+
+        return Period::get();
     }
 }

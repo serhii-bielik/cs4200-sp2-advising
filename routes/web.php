@@ -20,6 +20,8 @@ Route::get('/director/advisers', 'DirectorController@advisers');
 Route::get('/director/students', 'DirectorController@students');
 Route::post('/director/assign', 'DirectorController@assign');
 Route::post('/director/dismiss', 'DirectorController@dismiss');
+Route::get('/director/periods', 'DirectorController@periods');
+Route::post('/director/periods', 'DirectorController@addPeriod');
 
 Route::get('/adviser', 'AdviserController@dashboard');
 Route::get('/adviser/students', 'AdviserController@students');
