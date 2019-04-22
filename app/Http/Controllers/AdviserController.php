@@ -10,14 +10,14 @@ class AdviserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        //$this->middleware('auth');
     }
 
     private function isAdviser()
     {
-        $groupId = auth()->user()->group_id;
-        abort_unless( $groupId == UserGroup::Adviser || $groupId == UserGroup::Director,
-            403, "You must login under adviser/director account in order to use this API");
+//        $groupId = auth()->user()->group_id;
+//        abort_unless( $groupId == UserGroup::Adviser || $groupId == UserGroup::Director,
+//            403, "You must login under adviser/director account in order to use this API");
     }
 
     public function dashboard()
@@ -30,6 +30,17 @@ class AdviserController extends Controller
     public function students()
     {
         $this->isAdviser();
+
+        $userId = request('userId');
+        if (isset($userId)) {
+            $user = User::where('id', intval($userId))
+                ->whereBetween('group_id', [UserGroup::Adviser, UserGroup::Director])
+                ->first();
+            if (isset($user)) {
+                return $user->students;
+            }
+            return response()->json(['error' => 'Adviser does not exists.'], 400);
+        }
 
         return auth()->user()->students;
     }
@@ -68,12 +79,91 @@ class AdviserController extends Controller
         return $adviser->is_notification;
     }
 
+    public function settings()
+    {
+        $settings = [];
+
+        $userId = request('userId');
+
+        if (isset($userId)) {
+            $adviser = User::where('id', intval($userId))
+                ->whereBetween('group_id', [UserGroup::Adviser, UserGroup::Director])
+                ->first();
+            if (!isset($adviser)) {
+                return response()->json(['error' => 'Adviser does not exists.'], 400);
+            }
+        } else {
+            $adviser = auth()->user();
+        }
+
+        $settings['phone'] = $adviser->phone;
+        $settings['office'] = $adviser->office;
+        $settings['isNotification'] = $adviser->is_notification;
+        $settings['interval'] = $adviser->interval;
+
+        return $settings;
+    }
+
+    public function setSettings()
+    {
+        $settings = [];
+
+        $userId = request('userId');
+
+        if (isset($userId)) {
+            $adviser = User::where('id', intval($userId))
+                ->whereBetween('group_id', [UserGroup::Adviser, UserGroup::Director])
+                ->first();
+            if (!isset($adviser)) {
+                return response()->json(['error' => 'Adviser does not exists.'], 400);
+            }
+        } else {
+            $adviser = auth()->user();
+        }
+
+        $phone = request('phone');
+        if (isset($phone)) {
+            $adviser->phone = $phone;
+        }
+        $office = request('office');
+        if (isset($office)) {
+            $adviser->office = $office;
+        }
+        $isNotification = request('isNotification');
+        if (isset($isNotification)) {
+            $adviser->is_notification = $isNotification;
+        }
+        $interval = request('interval');
+        if (isset($interval)) {
+            $adviser->interval = $interval;
+        }
+        $adviser->save();
+
+        $settings['phone'] = $adviser->phone;
+        $settings['office'] = $adviser->office;
+        $settings['isNotification'] = $adviser->is_notification;
+        $settings['interval'] = $adviser->interval;
+
+        return $settings;
+    }
+
     public function messages()
     {
         $this->isAdviser();
 
-        $adviser = auth()->user();
         $studentId = intval(request('studentId'));
+        $userId = request('userId');
+
+        if (isset($userId)) {
+            $adviser = User::where('id', intval($userId))
+                ->whereBetween('group_id', [UserGroup::Adviser, UserGroup::Director])
+                ->first();
+            if (!isset($adviser)) {
+                return response()->json(['error' => 'Adviser does not exists.'], 400);
+            }
+        } else {
+            $adviser = auth()->user();
+        }
 
         $data = $adviser->messages($studentId, $adviser->id);
 
@@ -88,9 +178,20 @@ class AdviserController extends Controller
     {
         $this->isAdviser();
 
-        $adviser = auth()->user();
-        $studentId = intval(request('data.studentId'));
-        $message = request('data.message');
+        $studentId = intval(request('studentId'));
+        $message = request('message');
+        $userId = request('userId');
+
+        if (isset($userId)) {
+            $adviser = User::where('id', intval($userId))
+                ->whereBetween('group_id', [UserGroup::Adviser, UserGroup::Director])
+                ->first();
+            if (!isset($adviser)) {
+                return response()->json(['error' => 'Adviser does not exists.'], 400);
+            }
+        } else {
+            $adviser = auth()->user();
+        }
 
         $adviser->addMessage($studentId, $adviser->id, $message);
 
@@ -115,10 +216,22 @@ class AdviserController extends Controller
     {
         $this->isAdviser();
 
-        $studentId = intval(request('data.studentId'));
-        $note = request('data.note');
+        $studentId = intval(request('studentId'));
+        $note = request('note');
+        $userId = request('userId');
 
-        auth()->user()->addPublicNote($studentId, $note);
+        if (isset($userId)) {
+            $adviser = User::where('id', intval($userId))
+                ->whereBetween('group_id', [UserGroup::Adviser, UserGroup::Director])
+                ->first();
+            if (!isset($adviser)) {
+                return response()->json(['error' => 'Adviser does not exists.'], 400);
+            }
+        } else {
+            $adviser = auth()->user();
+        }
+
+        $adviser->addPublicNote($studentId, $note);
 
         return User::where('id', $studentId)->first()->publicNotes;
     }
@@ -135,10 +248,22 @@ class AdviserController extends Controller
     {
         $this->isAdviser();
 
-        $studentId = intval(request('data.studentId'));
-        $note = request('data.note');
+        $studentId = intval(request('studentId'));
+        $note = request('note');
+        $userId = request('userId');
 
-        auth()->user()->addPrivateNote($studentId, $note);
+        if (isset($userId)) {
+            $adviser = User::where('id', intval($userId))
+                ->whereBetween('group_id', [UserGroup::Adviser, UserGroup::Director])
+                ->first();
+            if (!isset($adviser)) {
+                return response()->json(['error' => 'Adviser does not exists.'], 400);
+            }
+        } else {
+            $adviser = auth()->user();
+        }
+
+        $adviser->addPrivateNote($studentId, $note);
 
         return User::where('id', $studentId)->first()->privateNotes;
     }

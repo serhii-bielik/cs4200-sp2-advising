@@ -11,13 +11,13 @@ class DirectorController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+//        $this->middleware('auth');
     }
 
     private function isDirector()
     {
-        abort_unless(auth()->user()->group_id == UserGroup::Director,
-            403, "You must login under director account in order to use this API");
+//        abort_unless(auth()->user()->group_id == UserGroup::Director,
+//            403, "You must login under director account in order to use this API");
     }
 
     public function faculties()
@@ -45,13 +45,13 @@ class DirectorController extends Controller
         $this->isDirector();
 
         //TODO: Validation
-        $adviserId = intval(request('data.adviser'));
+        $adviserId = intval(request('adviserId'));
         $adviser = User::where('id', $adviserId)->first();
         if(!isset($adviser)) {
             return response()->json(['error' => 'Adviser does not exists.'], 400);
         }
 
-        $adviser->addStudents(request('data.students'), $adviserId);
+        $adviser->addStudents(request('studentIds'), $adviserId);
 
         return $adviser->students;
     }
@@ -61,13 +61,13 @@ class DirectorController extends Controller
         $this->isDirector();
 
         //TODO: Validation
-        $adviserId = intval(request('data.adviser'));
+        $adviserId = intval(request('adviserId'));
         $adviser = User::where('id', $adviserId)->first();
         if(!isset($adviser)) {
             return response()->json(['error' => 'Adviser does not exists.'], 400);
         }
 
-        $adviser->dismissStudents(request('data.students'), $adviserId);
+        $adviser->dismissStudents(request('studentIds'), $adviserId);
 
         return $adviser->students;
     }
@@ -84,8 +84,8 @@ class DirectorController extends Controller
         $this->isDirector();
 
         $director = auth()->user();
-        $startDate = request('data.startDate');
-        $endDate = request('data.endDate');
+        $startDate = request('startDate');
+        $endDate = request('endDate');
 
         $director->addPeriod($startDate, $endDate);
 

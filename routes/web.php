@@ -15,6 +15,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Director Routes
+
 Route::get('/director/faculties', 'DirectorController@faculties');
 Route::get('/director/advisers', 'DirectorController@advisers');
 Route::get('/director/students', 'DirectorController@students');
@@ -23,18 +25,36 @@ Route::post('/director/dismiss', 'DirectorController@dismiss');
 Route::get('/director/periods', 'DirectorController@periods');
 Route::post('/director/periods', 'DirectorController@addPeriod');
 
+// Adviser Routes
+
 Route::get('/adviser', 'AdviserController@dashboard');
 Route::get('/adviser/students', 'AdviserController@students');
+Route::get('/adviser/{userId}/students', 'AdviserController@students');
+
+Route::get('/adviser/settings', 'AdviserController@settings');
+Route::get('/adviser/{userId}/settings', 'AdviserController@settings');
+Route::post('/adviser/settings', 'AdviserController@setSettings');
+Route::post('/adviser/{userId}/settings', 'AdviserController@setSettings');
+
+Route::get('/adviser/interval', 'AdviserController@getInterval');
 Route::get('/adviser/interval', 'AdviserController@getInterval');
 Route::post('/adviser/interval', 'AdviserController@setInterval');
 Route::get('/adviser/notification', 'AdviserController@getNotification');
 Route::post('/adviser/notification', 'AdviserController@setNotification');
+
 Route::get('/adviser/messages/{studentId}', 'AdviserController@messages');
+Route::get('/adviser/{userId}/messages/{studentId}', 'AdviserController@messages');
 Route::post('/adviser/messages', 'AdviserController@addMessage');
+Route::post('/adviser/{userId}/messages', 'AdviserController@addMessage');
+
 Route::get('/adviser/notes/public/{studentId}', 'AdviserController@getPublicNotes');
 Route::post('/adviser/notes/public', 'AdviserController@addPublicNote');
+Route::post('/adviser/{userId}/notes/public', 'AdviserController@addPublicNote');
 Route::get('/adviser/notes/private/{studentId}', 'AdviserController@getPrivateNotes');
 Route::post('/adviser/notes/private', 'AdviserController@addPrivateNote');
+Route::post('/adviser/{userId}/notes/private', 'AdviserController@addPrivateNote');
+
+// Student Routes
 
 Route::get('/student', 'StudentController@dashboard');
 Route::get('/student/note', 'StudentController@note');
@@ -44,6 +64,8 @@ Route::get('/student/notification', 'StudentController@getNotification');
 Route::post('/student/notification', 'StudentController@setNotification');
 Route::get('/student/messages', 'StudentController@messages');
 Route::post('/student/messages', 'StudentController@addMessage');
+
+// Admin Routes
 
 Route::get('/admin/advisers', 'AdminController@advisers');
 Route::post('/admin/advisers', 'AdminController@advisersUpload');

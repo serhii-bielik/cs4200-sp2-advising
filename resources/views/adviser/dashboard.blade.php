@@ -40,6 +40,9 @@
 
         <p>@{{ period }}</p>
         <button v-on:click="addPeriod">Add Period (Director API)</button>
+
+        <p>@{{ settings }}</p>
+        <button v-on:click="setSettings">Update Settings</button>
     </div>
 
     <hr>
@@ -61,26 +64,29 @@
             interval: '',
             note: '',
             period: '',
+            settings: '',
         },
         methods: {
             assignStudents: function () {
 
-                const adviser = 2;
-                const students = [334, 335, 336, 337, 338];
+                const adviserId = 2;
+                const studentIds = [334, 335, 336, 337, 338];
 
                 axios.post('/director/assign',{
-                    data: { adviser: adviser, students: students }
+                    adviserId: adviserId,
+                    studentIds: studentIds,
                 }).then(response => this.message = response.data)
                   .catch(error => console.error(error));
             },
 
             dismissStudents: function () {
 
-                const adviser = 2;
-                const students = [334, 335, 336, 337, 338];
+                const adviserId = 2;
+                const studentIds = [334, 335, 336, 337, 338];
 
                 axios.post('/director/dismiss',{
-                    data: { adviser: adviser, students: students }
+                    adviserId: adviserId,
+                    studentIds: studentIds
                 }).then(response => this.message = response.data)
                     .catch(error => console.error(error));
             },
@@ -115,29 +121,43 @@
 
             addMessage: function () {
                 axios.post('/adviser/messages',{
-                    data: { studentId: 355, message: 'Lorem ipsum dollar emet 222.' }
+                    studentId: 355,
+                    message: 'Lorem ipsum dollar emet 222.'
                 }).then(response => this.chat = response.data)
                     .catch(error => console.error(error));
             },
 
             addPublicNote: function () {
                 axios.post('/adviser/notes/public',{
-                    data: { studentId: 355, note: 'Public Note TESTTT' }
+                    studentId: 355,
+                    note: 'Public Note TESTTT'
                 }).then(response => this.note = response.data)
                     .catch(error => console.error(error));
             },
 
             addPrivateNote: function () {
                 axios.post('/adviser/notes/private',{
-                    data: { studentId: 355, note: 'Private Note TESTTT' }
+                    studentId: 355,
+                    note: 'Private Note TESTTT'
                 }).then(response => this.note = response.data)
                     .catch(error => console.error(error));
             },
 
             addPeriod: function () {
                 axios.post('/director/periods',{
-                    data: { startDate: '2019-07-15', endDate: '2019-07-25' }
+                    startDate: '2019-07-15',
+                    endDate: '2019-07-25'
                 }).then(response => this.period = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            setSettings: function () {
+                axios.post('/adviser/settings',{
+                    phone: '0999111888',
+                    office: 'VMS9999',
+                    isNotification: 0,
+                    interval: 30
+                }).then(response => this.settings = response.data)
                     .catch(error => console.error(error));
             },
         }
