@@ -15,9 +15,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Director Routes
-
 Route::get('/director/faculties', 'DirectorController@faculties');
+
 Route::get('/director/advisers', 'DirectorController@advisers');
 Route::get('/director/students', 'DirectorController@students');
 Route::post('/director/assign', 'DirectorController@assign');
@@ -77,6 +76,6 @@ Route::post('/admin/students', 'AdminController@studentsUpload');
 //Auth::routes();
 
 Route::get('/login', 'Auth\LoginController@redirectToProvider');
-Route::post('login', [ 'as' => 'login', 'uses' => 'Auth\LoginController@redirectToProvider']);
+Route::post('/login', [ 'as' => 'login', 'uses' => 'Auth\LoginController@redirectToProvider']);
 Route::get('/logout', 'Auth\LoginController@logout');
 Route::get('/callback', 'Auth\LoginController@handleProviderCallback');

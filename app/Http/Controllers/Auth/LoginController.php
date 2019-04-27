@@ -52,7 +52,7 @@ class LoginController extends Controller
 
     public function logout() {
         auth()->logout();
-        return redirect()->to('/');
+        return redirect()->to(env('APP_URL', '/'));
     }
 
     /**
@@ -65,7 +65,7 @@ class LoginController extends Controller
         try {
             $user = Socialite::driver('google')->user();
         } catch (\Exception $e) {
-            return redirect('/login');
+            return redirect(env('APP_URL', '/'));
         }
 
         if (User::count() == 0) {
@@ -84,7 +84,7 @@ class LoginController extends Controller
             session()->flash('message', "Admin user was successfully added.");
             session()->flash('alert-class', 'alert-success');
 
-            return redirect()->to('/admin/advisers');
+            return redirect()->to('admin/advisers');
         } else {
             $existingUser = User::where('email', $user->email)->first();
 
@@ -98,11 +98,11 @@ class LoginController extends Controller
                 auth()->login($existingUser, true);
 
                 if ($existingUser->group_id == UserGroup::Admin) {
-                    return redirect()->to('/admin/advisers');
+                    return redirect()->to('admin/advisers');
                 } else if ($existingUser->group_id == UserGroup::Student) {
-                    return redirect()->to('/student');
+                    return redirect()->to(env('APP_URL', '/'));
                 } else {
-                    return redirect()->to('/adviser');
+                    return redirect()->to(env('APP_URL', '/'));
                 }
 
             } else {
@@ -111,6 +111,6 @@ class LoginController extends Controller
             }
         }
 
-        return redirect()->to('/');
+        return redirect()->to(env('APP_URL', '/'));
     }
 }
