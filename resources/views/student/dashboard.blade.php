@@ -29,10 +29,10 @@
     <hr>
     <p>So far the is no groups checked. If you login you can access everything.</p>
     <p>
-        <a href="/admin/advisers">Admin Panel</a><br>
-        <a href="/adviser">Adviser Panel (login as adviser/director)</a><br>
-        <a href="/student">Student Panel (login as student)</a><br>
-        <a href="/logout">Logout</a><br>
+        <a href="/api/admin/advisers">Admin Panel</a><br>
+        <a href="/api/adviser">Adviser Panel (login as adviser/director)</a><br>
+        <a href="/api/student">Student Panel (login as student)</a><br>
+        <a href="/api/logout">Logout</a><br>
     </p>
 </div>
 <script>
@@ -44,21 +44,21 @@
         },
         methods: {
             onNotification: function () {
-                axios.post('/student/notification',{
+                axios.post('/api/student/notification',{
                     notification: 1
                 }).then(response => this.message = response.data)
                     .catch(error => console.error(error));
             },
 
             offNotification: function () {
-                axios.post('/student/notification',{
+                axios.post('/api/student/notification',{
                     notification: 0
                 }).then(response => this.message = response.data)
                     .catch(error => console.error(error));
             },
 
             addMessage: function () {
-                axios.post('/student/messages',{
+                axios.post('/api/student/messages',{
                     message: 'Lorem ipsum dollar emet.'
                 }).then(response => this.chat = response.data)
                     .catch(error => console.error(error));

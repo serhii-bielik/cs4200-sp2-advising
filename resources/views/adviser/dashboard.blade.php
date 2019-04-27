@@ -48,10 +48,10 @@
     <hr>
     <p>So far the is no groups checked. If you login you can access everything.</p>
     <p>
-        <a href="/admin/advisers">Admin Panel</a><br>
-        <a href="/adviser">Adviser Panel</a><br>
-        <a href="/student">Student Panel</a><br>
-        <a href="/logout">Logout</a><br>
+        <a href="/api/admin/advisers">Admin Panel</a><br>
+        <a href="/api/adviser">Adviser Panel</a><br>
+        <a href="/api/student">Student Panel</a><br>
+        <a href="/api/logout">Logout</a><br>
     </p>
 </div>
 <script>
@@ -72,7 +72,7 @@
                 const adviserId = 2;
                 const studentIds = [334, 335, 336, 337, 338];
 
-                axios.post('/director/assign',{
+                axios.post('/api/director/assign',{
                     adviserId: adviserId,
                     studentIds: studentIds,
                 }).then(response => this.message = response.data)
@@ -84,7 +84,7 @@
                 const adviserId = 2;
                 const studentIds = [334, 335, 336, 337, 338];
 
-                axios.post('/director/dismiss',{
+                axios.post('/api/director/dismiss',{
                     adviserId: adviserId,
                     studentIds: studentIds
                 }).then(response => this.message = response.data)
@@ -92,35 +92,35 @@
             },
 
             onNotification: function () {
-                axios.post('/adviser/notification',{
+                axios.post('/api/adviser/notification',{
                     notification: 1
                 }).then(response => this.notification = response.data)
                     .catch(error => console.error(error));
             },
 
             offNotification: function () {
-                axios.post('/adviser/notification',{
+                axios.post('/api/adviser/notification',{
                     notification: 0
                 }).then(response => this.notification = response.data)
                     .catch(error => console.error(error));
             },
 
             interval20: function () {
-                axios.post('/adviser/interval',{
+                axios.post('/api/adviser/interval',{
                     interval: 20
                 }).then(response => this.interval = response.data)
                     .catch(error => console.error(error));
             },
 
             interval30: function () {
-                axios.post('/adviser/interval',{
+                axios.post('/api/adviser/interval',{
                     interval: 30
                 }).then(response => this.interval = response.data)
                     .catch(error => console.error(error));
             },
 
             addMessage: function () {
-                axios.post('/adviser/messages',{
+                axios.post('/api/adviser/messages',{
                     studentId: 355,
                     message: 'Lorem ipsum dollar emet 222.'
                 }).then(response => this.chat = response.data)
@@ -128,7 +128,7 @@
             },
 
             addPublicNote: function () {
-                axios.post('/adviser/notes/public',{
+                axios.post('/api/adviser/notes/public',{
                     studentId: 355,
                     note: 'Public Note TESTTT'
                 }).then(response => this.note = response.data)
@@ -136,7 +136,7 @@
             },
 
             addPrivateNote: function () {
-                axios.post('/adviser/notes/private',{
+                axios.post('/api/adviser/notes/private',{
                     studentId: 355,
                     note: 'Private Note TESTTT'
                 }).then(response => this.note = response.data)
@@ -144,7 +144,7 @@
             },
 
             addPeriod: function () {
-                axios.post('/director/periods',{
+                axios.post('/api/director/periods',{
                     startDate: '2019-07-15',
                     endDate: '2019-07-25'
                 }).then(response => this.period = response.data)
@@ -152,7 +152,7 @@
             },
 
             setSettings: function () {
-                axios.post('/adviser/settings',{
+                axios.post('/api/adviser/settings',{
                     phone: '0999111888',
                     office: 'VMS9999',
                     isNotification: 0,
