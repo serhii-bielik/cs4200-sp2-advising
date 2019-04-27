@@ -65,6 +65,11 @@ class User extends Authenticatable
         }
     }
 
+    public function group()
+    {
+        return $this->belongsTo('App\Group', 'group_id', 'id');
+    }
+
     public function faculty()
     {
         return $this->belongsTo('App\Faculty', 'faculty_id', 'id');

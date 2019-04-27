@@ -24,6 +24,10 @@ Route::post('/director/dismiss', 'DirectorController@dismiss');
 Route::get('/director/periods', 'DirectorController@periods');
 Route::post('/director/periods', 'DirectorController@addPeriod');
 
+// User (Common) Routes
+
+Route::get('/whoami', 'UserController@getUserInfo');
+
 // Adviser Routes
 
 Route::get('/adviser', 'AdviserController@dashboard');
