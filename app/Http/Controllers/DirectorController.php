@@ -11,13 +11,13 @@ class DirectorController extends Controller
 {
     public function __construct()
     {
-//        $this->middleware('auth');
+        $this->middleware('auth');
     }
 
     private function isDirector()
     {
-//        abort_unless(auth()->user()->group_id == UserGroup::Director,
-//            403, "You must login under director account in order to use this API");
+        abort_unless(auth()->user()->group_id == UserGroup::Director,
+            403, "You must login under director account in order to use this API");
     }
 
     public function faculties()

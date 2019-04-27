@@ -10,14 +10,14 @@ class AdviserController extends Controller
 {
     public function __construct()
     {
-        //$this->middleware('auth');
+        $this->middleware('auth');
     }
 
     private function isAdviser()
     {
-//        $groupId = auth()->user()->group_id;
-//        abort_unless( $groupId == UserGroup::Adviser || $groupId == UserGroup::Director,
-//            403, "You must login under adviser/director account in order to use this API");
+        $groupId = auth()->user()->group_id;
+        abort_unless( $groupId == UserGroup::Adviser || $groupId == UserGroup::Director,
+            403, "You must login under adviser/director account in order to use this API");
     }
 
     public function dashboard()
