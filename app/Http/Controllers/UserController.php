@@ -16,6 +16,6 @@ class UserController extends Controller
             return $user;
         }
 
-        return response()->json(['error' => 'You are not logged in.'], 400);
+        return response()->json(['error' => 'You are not logged in.'], 401);
     }
 }
