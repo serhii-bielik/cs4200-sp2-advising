@@ -32,6 +32,14 @@ class DirectorController extends Controller
         return User::where('group_id', UserGroup::Student)->get();
     }
 
+    public function unassignedStudents()
+    {
+        $this->isDirector();
+
+        return User::where('group_id', UserGroup::Student)->
+        doesntHave('studentAdviser')->get();
+    }
+
     public function advisers()
     {
         $this->isDirector();
