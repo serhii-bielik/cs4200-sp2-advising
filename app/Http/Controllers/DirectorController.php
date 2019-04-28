@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Faculty;
 use App\Period;
 use App\User;
 use App\UserGroup;
@@ -18,11 +17,6 @@ class DirectorController extends Controller
     {
         abort_unless(auth()->user()->group_id == UserGroup::Director,
             403, "You must login under director account in order to use this API");
-    }
-
-    public function faculties()
-    {
-        return Faculty::all();
     }
 
     public function students()

@@ -18,11 +18,9 @@ Route::get('/', function () {
 // User (Common) Routes
 
 Route::get('/whoami', 'UserController@getUserInfo');
-
+Route::get('/faculties', 'UserController@faculties');
 
 // Director Routes
-
-Route::get('/director/faculties', 'DirectorController@faculties');
 
 Route::get('/director/advisers', 'DirectorController@advisers');
 Route::get('/director/students', 'DirectorController@students');

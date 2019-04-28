@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
-use App\UserGroup;
+use App\Faculty;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -24,6 +23,11 @@ class UserController extends Controller
         }
 
         return response()->json(['error' => 'You are not logged in.'], 401);
+    }
+
+    public function faculties()
+    {
+        return Faculty::all();
     }
 
     public function settings()
