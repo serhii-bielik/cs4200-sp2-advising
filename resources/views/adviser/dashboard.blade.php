@@ -70,7 +70,7 @@
             assignStudents: function () {
 
                 const adviserId = 2;
-                const studentIds = [334, 335, 336, 337, 338];
+                const studentIds = [610, 611, 612, 613, 614];
 
                 axios.post('/api/director/assign',{
                     adviserId: adviserId,
@@ -82,7 +82,7 @@
             dismissStudents: function () {
 
                 const adviserId = 2;
-                const studentIds = [334, 335, 336, 337, 338];
+                const studentIds = [610, 611, 612, 613, 614];
 
                 axios.post('/api/director/dismiss',{
                     adviserId: adviserId,
@@ -121,7 +121,7 @@
 
             addMessage: function () {
                 axios.post('/api/adviser/messages',{
-                    studentId: 355,
+                    studentId: 609,
                     message: 'Lorem ipsum dollar emet 222.'
                 }).then(response => this.chat = response.data)
                     .catch(error => console.error(error));
@@ -129,7 +129,7 @@
 
             addPublicNote: function () {
                 axios.post('/api/adviser/notes/public',{
-                    studentId: 355,
+                    studentId: 609,
                     note: 'Public Note TESTTT'
                 }).then(response => this.note = response.data)
                     .catch(error => console.error(error));
@@ -137,7 +137,7 @@
 
             addPrivateNote: function () {
                 axios.post('/api/adviser/notes/private',{
-                    studentId: 355,
+                    studentId: 609,
                     note: 'Private Note TESTTT'
                 }).then(response => this.note = response.data)
                     .catch(error => console.error(error));

@@ -33,6 +33,13 @@ class StudentController extends Controller
         return auth()->user()->lastPublicNoteForStudent;
     }
 
+    public function notes()
+    {
+        $this->isStudent();
+
+        return auth()->user()->publicNotes;
+    }
+
     public function adviser()
     {
         $this->isStudent();

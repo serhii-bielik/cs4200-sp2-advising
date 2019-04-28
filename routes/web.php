@@ -61,6 +61,7 @@ Route::post('/adviser/{userId}/notes/private', 'AdviserController@addPrivateNote
 
 Route::get('/student', 'StudentController@dashboard');
 Route::get('/student/note', 'StudentController@note');
+Route::get('/student/notes', 'StudentController@notes');
 Route::get('/student/adviser', 'StudentController@adviser');
 Route::get('/student/info', 'StudentController@info');
 Route::get('/student/notification', 'StudentController@getNotification');
