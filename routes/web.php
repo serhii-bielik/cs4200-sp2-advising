@@ -35,6 +35,7 @@ Route::post('/director/period/remove', 'DirectorController@removePeriod');
 
 Route::get('/adviser', 'AdviserController@dashboard');
 Route::get('/adviser/students', 'AdviserController@students');
+Route::get('/adviser/student/{studentId}', 'AdviserController@student');
 
 Route::get('/adviser/settings', 'UserController@settings');
 Route::post('/adviser/settings', 'UserController@setSettings');

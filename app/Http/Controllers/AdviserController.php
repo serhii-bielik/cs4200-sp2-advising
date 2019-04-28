@@ -34,6 +34,18 @@ class AdviserController extends Controller
         return auth()->user()->students;
     }
 
+    public function student()
+    {
+        $this->isAdviser();
+
+        $studentId = intval(request('studentId'));
+
+        $student = User::where('group_id', UserGroup::Student)->where('id', $studentId)->first();
+        $student->faculty;
+
+        return $student;
+    }
+
     public function messages()
     {
         $this->isAdviser();
