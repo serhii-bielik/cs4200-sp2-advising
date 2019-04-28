@@ -28,8 +28,8 @@ class StudentsImport implements ToModel
     */
     public function model(array $row)
     {
-        if (isset($row[0]) && isset($row[1]) && isset($row[2]) && isset($row[3])
-            && $row[1] != 'name' && isset($this->faculties[$row[3]])) {
+        if (isset($row[0]) && isset($row[1]) && isset($row[2]) && isset($row[4])
+            && $row[1] != 'name' && isset($this->faculties[$row[4]])) {
 
             $email = "u{$row[0]}@au.edu";
 
@@ -38,9 +38,9 @@ class StudentsImport implements ToModel
                     'au_id' => strval($row[0]),
                     'name' => $row[1],
                     'email' => $email,
-                    'faculty_id' => $this->faculties[$row[3]],
-                    'credits' => isset($row[4]) ? intval($row[4]) : 0,
-                    'gpa' => isset($row[5]) ? floatval($row[5]) : 0,
+                    'faculty_id' => $this->faculties[$row[4]],
+                    'credits' => isset($row[5]) ? intval($row[5]) : 0,
+                    'gpa' => isset($row[6]) ? floatval($row[6]) : 0,
                     'group_id' => UserGroup::Student,
                 ]);
             }
