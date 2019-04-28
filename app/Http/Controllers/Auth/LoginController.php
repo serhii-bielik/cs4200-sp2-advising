@@ -65,7 +65,9 @@ class LoginController extends Controller
         try {
             $user = Socialite::driver('google')->user();
         } catch (\Exception $e) {
-            return redirect(env('APP_URL', '/'));
+            session()->flash('message', "There is a problem with Google Authorisation");
+            session()->flash('alert-class', 'alert-danger');
+            return redirect('/');
         }
 
         if (User::count() == 0) {
@@ -85,7 +87,9 @@ class LoginController extends Controller
             session()->flash('alert-class', 'alert-success');
 
             return redirect()->to('admin/advisers');
+
         } else {
+
             $existingUser = User::where('email', $user->email)->first();
 
             if($existingUser){
@@ -99,15 +103,13 @@ class LoginController extends Controller
 
                 if ($existingUser->group_id == UserGroup::Admin) {
                     return redirect()->to('admin/advisers');
-                } else if ($existingUser->group_id == UserGroup::Student) {
-                    return redirect()->to(env('APP_URL', '/'));
-                } else {
-                    return redirect()->to(env('APP_URL', '/'));
                 }
 
             } else {
                 session()->flash('message', "User with {$user->email} was not found in the system.");
                 session()->flash('alert-class', 'alert-danger');
+
+                return redirect()->to('/');
             }
         }
 
