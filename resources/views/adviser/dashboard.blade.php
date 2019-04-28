@@ -23,14 +23,6 @@
         <button v-on:click="assignStudents">Assign Students</button>
         <button v-on:click="dismissStudents">Dismiss Students</button>
 
-        <p>@{{ notification }}</p>
-        <button v-on:click="onNotification">On Notification</button>
-        <button v-on:click="offNotification">Off Notification</button>
-
-        <p>@{{ interval }}</p>
-        <button v-on:click="interval20">20 Interval</button>
-        <button v-on:click="interval30">30 Interval</button>
-
         <p>@{{ chat }}</p>
         <button v-on:click="addMessage">Add test message</button>
 
@@ -60,8 +52,6 @@
         data: {
             message: '',
             chat: '',
-            notification: '',
-            interval: '',
             note: '',
             period: '',
             settings: '',
@@ -88,34 +78,6 @@
                     adviserId: adviserId,
                     studentIds: studentIds
                 }).then(response => this.message = response.data)
-                    .catch(error => console.error(error));
-            },
-
-            onNotification: function () {
-                axios.post('/api/adviser/notification',{
-                    notification: 1
-                }).then(response => this.notification = response.data)
-                    .catch(error => console.error(error));
-            },
-
-            offNotification: function () {
-                axios.post('/api/adviser/notification',{
-                    notification: 0
-                }).then(response => this.notification = response.data)
-                    .catch(error => console.error(error));
-            },
-
-            interval20: function () {
-                axios.post('/api/adviser/interval',{
-                    interval: 20
-                }).then(response => this.interval = response.data)
-                    .catch(error => console.error(error));
-            },
-
-            interval30: function () {
-                axios.post('/api/adviser/interval',{
-                    interval: 30
-                }).then(response => this.interval = response.data)
                     .catch(error => console.error(error));
             },
 
@@ -155,7 +117,7 @@
                 axios.post('/api/adviser/settings',{
                     phone: '0999111888',
                     office: 'VMS9999',
-                    isNotification: 0,
+                    is_notification: 0,
                     interval: 30
                 }).then(response => this.settings = response.data)
                     .catch(error => console.error(error));

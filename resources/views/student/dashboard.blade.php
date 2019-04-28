@@ -24,6 +24,9 @@
 
         <p>@{{ chat }}</p>
         <button v-on:click="addMessage">Add test message</button>
+
+        <p>@{{ settings }}</p>
+        <button v-on:click="setSettings">Settings</button>
     </div>
 
     <hr>
@@ -41,6 +44,7 @@
         data: {
             message: '',
             chat: '',
+            settings: '',
         },
         methods: {
             onNotification: function () {
@@ -61,6 +65,14 @@
                 axios.post('/api/student/messages',{
                     message: 'Lorem ipsum dollar emet.'
                 }).then(response => this.chat = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            setSettings: function () {
+                axios.post('/api/student/settings',{
+                    phone: '0111111111',
+                    is_notification: 0,
+                }).then(response => this.settings = response.data)
                     .catch(error => console.error(error));
             },
         }

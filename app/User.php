@@ -90,6 +90,11 @@ class User extends Authenticatable
         return $this->hasMany('App\PublicNote', 'advisee_id')->orderByDesc('id');
     }
 
+    public function isStudent()
+    {
+        return $this->group_id == UserGroup::Student;
+    }
+
     public function addPublicNote($studentId, $note)
     {
         PublicNote::create([
