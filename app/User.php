@@ -162,6 +162,16 @@ class User extends Authenticatable
         ]);
     }
 
+    public function removePeriod($periodId)
+    {
+        $period = Period::where('id', $periodId)->first();
+        if (isset($period)) {
+            $period->delete();
+            return true;
+        }
+        return false;
+    }
+
     public function addPeriod($startDate, $endDate)
     {
         $date = DateTime::createFromFormat('Y-m-d', $startDate);

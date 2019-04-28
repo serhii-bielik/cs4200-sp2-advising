@@ -99,4 +99,18 @@ class DirectorController extends Controller
 
         return Period::get();
     }
+
+    public function removePeriod()
+    {
+        $this->isDirector();
+
+        $director = auth()->user();
+        $periodId = request('id');
+
+        if (!$director->removePeriod($periodId)) {
+            return response()->json(['error' => 'Period does not exists.'], 400);
+        }
+
+        return Period::get();
+    }
 }

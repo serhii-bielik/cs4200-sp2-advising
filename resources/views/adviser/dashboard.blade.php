@@ -32,6 +32,7 @@
 
         <p>@{{ period }}</p>
         <button v-on:click="addPeriod">Add Period (Director API)</button>
+        <button v-on:click="rmPeriod">Rm Period (Director API)</button>
 
         <p>@{{ settings }}</p>
         <button v-on:click="setSettings">Update Settings</button>
@@ -120,6 +121,13 @@
                     is_notification: 0,
                     interval: 30
                 }).then(response => this.settings = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            rmPeriod: function () {
+                axios.post('/api/director/period/remove',{
+                    id: 6,
+                }).then(response => this.period = response.data)
                     .catch(error => console.error(error));
             },
         }

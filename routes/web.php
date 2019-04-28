@@ -31,6 +31,7 @@ Route::post('/director/assign', 'DirectorController@assign');
 Route::post('/director/dismiss', 'DirectorController@dismiss');
 Route::get('/director/periods', 'DirectorController@periods');
 Route::post('/director/periods', 'DirectorController@addPeriod');
+Route::post('/director/period/remove', 'DirectorController@removePeriod');
 
 // Adviser Routes
 
