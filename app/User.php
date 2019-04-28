@@ -104,6 +104,26 @@ class User extends Authenticatable
         ]);
     }
 
+    public function removePublicNote($noteId)
+    {
+        $note = PublicNote::where('id', $noteId)->first();
+        if (isset($note)) {
+            $note->delete();
+            return true;
+        }
+        return false;
+    }
+
+    public function removePrivateNote($noteId)
+    {
+        $note = PrivateNote::where('id', $noteId)->first();
+        if (isset($note)) {
+            $note->delete();
+            return true;
+        }
+        return false;
+    }
+
     public function addPrivateNote($studentId, $note)
     {
         PrivateNote::create([

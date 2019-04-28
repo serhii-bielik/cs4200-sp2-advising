@@ -28,7 +28,9 @@
 
         <p>@{{ note }}</p>
         <button v-on:click="addPublicNote">Add Public Note</button>
+        <button v-on:click="rmPublicNote">Rm Public Note</button>
         <button v-on:click="addPrivateNote">Add Private Note</button>
+        <button v-on:click="rmPrivateNote">Rm Private Note</button>
 
         <p>@{{ period }}</p>
         <button v-on:click="addPeriod">Add Period (Director API)</button>
@@ -102,6 +104,22 @@
                 axios.post('/api/adviser/notes/private',{
                     studentId: 609,
                     note: 'Private Note TESTTT'
+                }).then(response => this.note = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            rmPublicNote: function () {
+                axios.post('/api/adviser/notes/public/remove',{
+                    student_id: 609,
+                    note_id: 10
+                }).then(response => this.note = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            rmPrivateNote: function () {
+                axios.post('/api/adviser/notes/private/remove',{
+                    student_id: 609,
+                    note_id: 10
                 }).then(response => this.note = response.data)
                     .catch(error => console.error(error));
             },

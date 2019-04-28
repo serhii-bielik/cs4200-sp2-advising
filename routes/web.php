@@ -43,8 +43,11 @@ Route::get('/adviser/messages/{studentId}', 'AdviserController@messages');
 Route::post('/adviser/messages', 'AdviserController@addMessage');
 
 Route::get('/adviser/notes/public/{studentId}', 'AdviserController@getPublicNotes');
+Route::post('/adviser/notes/public/remove', 'AdviserController@removePublicNote');
 Route::post('/adviser/notes/public', 'AdviserController@addPublicNote');
+
 Route::get('/adviser/notes/private/{studentId}', 'AdviserController@getPrivateNotes');
+Route::post('/adviser/notes/private/remove', 'AdviserController@removePrivateNote');
 Route::post('/adviser/notes/private', 'AdviserController@addPrivateNote');
 
 // Student Routes

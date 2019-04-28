@@ -76,7 +76,7 @@ class AdviserController extends Controller
         $this->isAdviser();
 
         $studentId = intval(request('studentId'));
-        return User::where('id', $studentId)->first()->publicNotes;
+        return User::where('group_id', UserGroup::Student)->where('id', $studentId)->first()->publicNotes;
     }
 
     public function addPublicNote()
@@ -90,7 +90,27 @@ class AdviserController extends Controller
 
         $adviser->addPublicNote($studentId, $note);
 
-        return User::where('id', $studentId)->first()->publicNotes;
+        return User::where('group_id', UserGroup::Student)->where('id', $studentId)->first()->publicNotes;
+    }
+
+    public function removePublicNote()
+    {
+        $this->isAdviser();
+
+        $studentId = intval(request('student_id'));
+
+        $student = User::where('group_id', UserGroup::Student)->where('id', $studentId)->first();
+        if (!isset($student)) {
+            return response()->json(['error' => 'Student does not exists.'], 400);
+        }
+
+        $noteId = intval(request('note_id'));
+
+        if (!$student->removePublicNote($noteId)) {
+            return response()->json(['error' => 'Public note does not exists.'], 400);
+        }
+
+        return $student->publicNotes;
     }
 
     public function getPrivateNotes()
@@ -98,7 +118,7 @@ class AdviserController extends Controller
         $this->isAdviser();
 
         $studentId = intval(request('studentId'));
-        return User::where('id', $studentId)->first()->privateNotes;
+        return User::where('group_id', UserGroup::Student)->where('id', $studentId)->first()->privateNotes;
     }
 
     public function addPrivateNote()
@@ -112,6 +132,26 @@ class AdviserController extends Controller
 
         $adviser->addPrivateNote($studentId, $note);
 
-        return User::where('id', $studentId)->first()->privateNotes;
+        return User::where('group_id', UserGroup::Student)->where('id', $studentId)->first()->privateNotes;
+    }
+
+    public function removePrivateNote()
+    {
+        $this->isAdviser();
+
+        $studentId = intval(request('student_id'));
+
+        $student = User::where('group_id', UserGroup::Student)->where('id', $studentId)->first();
+        if (!isset($student)) {
+            return response()->json(['error' => 'Student does not exists.'], 400);
+        }
+
+        $noteId = intval(request('note_id'));
+
+        if (!$student->removePrivateNote($noteId)) {
+            return response()->json(['error' => 'Private note does not exists.'], 400);
+        }
+
+        return $student->privateNotes;
     }
 }
