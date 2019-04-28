@@ -37,7 +37,7 @@ class StudentController extends Controller
     {
         $this->isStudent();
 
-        return auth()->user()->studentAdviser;
+        return auth()->user()->studentAdviser->first();
     }
 
     public function info()
