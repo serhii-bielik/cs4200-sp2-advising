@@ -77,7 +77,7 @@ class User extends Authenticatable
 
     public function students()
     {
-        return $this->belongsToMany('App\User', 'adviser_advisee', 'adviser_id', 'advisee_id');
+        return $this->belongsToMany('App\User', 'adviser_advisee', 'adviser_id', 'advisee_id')->with('faculty');
     }
 
     public function lastPublicNoteForStudent()

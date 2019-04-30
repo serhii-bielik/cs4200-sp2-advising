@@ -23,7 +23,7 @@ class DirectorController extends Controller
     {
         $this->isDirector();
 
-        return User::where('group_id', UserGroup::Student)->get();
+        return User::where('group_id', UserGroup::Student)->with('faculty')->get();
     }
 
     public function unassignedStudents()
