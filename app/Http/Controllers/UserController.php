@@ -68,6 +68,7 @@ class UserController extends Controller
         }
 
         if (!$user->isStudent()) {
+            // TODO: Remove timeslots for current period!
             $interval = request('interval');
             if (isset($interval)) {
                 $user->interval = $interval;

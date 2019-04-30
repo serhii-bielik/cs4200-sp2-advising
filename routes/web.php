@@ -51,6 +51,10 @@ Route::get('/adviser/notes/private/{studentId}', 'AdviserController@getPrivateNo
 Route::post('/adviser/notes/private/remove', 'AdviserController@removePrivateNote');
 Route::post('/adviser/notes/private', 'AdviserController@addPrivateNote');
 
+Route::get('/adviser/timeslots', 'AdviserController@timeslots');
+Route::get('/adviser/timeslots/{date}', 'AdviserController@timeslotsByDate');
+Route::post('/adviser/timeslots/{date}', 'AdviserController@addTimeslotForDate');
+
 // Student Routes
 
 Route::get('/student', 'StudentController@dashboard');

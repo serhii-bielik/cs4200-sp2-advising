@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\UserGroup;
+use DateTime;
 use Illuminate\Http\Request;
 
 class AdviserController extends Controller
@@ -165,5 +166,45 @@ class AdviserController extends Controller
         }
 
         return $student->privateNotes;
+    }
+
+    public function timeslots()
+    {
+        $this->isAdviser();
+
+        return auth()->user()->getTimeslotsForLastPeriod();
+    }
+
+    public function timeslotsByDate()
+    {
+        $this->isAdviser();
+
+        $date = DateTime::createFromFormat('Y-m-d', request('date'));
+        if (!$date) {
+            return response()->json(['error' => 'Invalid date format. Please use: Y-m-d'], 400);
+        }
+
+        return auth()->user()->getTimeslotsForDate($date->format('Y-m-d'));
+    }
+
+    public function addTimeslotForDate()
+    {
+        $this->isAdviser();
+
+        $date = DateTime::createFromFormat('Y-m-d', request('date'));
+        if (!$date) {
+            return response()->json(['error' => 'Invalid date format. Please use: Y-m-d'], 400);
+        }
+
+        $time = DateTime::createFromFormat('H:i', request('time'));
+        if (!$time) {
+            return response()->json(['error' => 'Invalid time format. Please use: H:i'], 400);
+        }
+
+        try {
+            return auth()->user()->addTimeslotForDate($date, $time);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
     }
 }

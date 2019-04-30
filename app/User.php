@@ -216,4 +216,53 @@ class User extends Authenticatable
             'end_date' => $endDate
         ]);
     }
+
+    public function getTimeslotsForLastPeriod()
+    {
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        $adviserId = auth()->user()->id;
+
+        $timeslots = Timeslot::select('date')
+            ->where('adviser_id', $adviserId)
+            ->where('period_id', $lastPeriod->id)
+            ->groupBy('date')
+            ->get();
+
+        return $timeslots;
+    }
+
+    public function getTimeslotsForDate($date)
+    {
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        $adviserId = auth()->user()->id;
+
+        $timeslots = Timeslot::where('adviser_id', $adviserId)
+            ->where('period_id', $lastPeriod->id)
+            ->where('date', $date)
+            ->with('activeReservation')
+            ->get();
+
+        return $timeslots;
+    }
+
+    public function addTimeslotForDate($date, $time)
+    {
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        $adviserId = auth()->user()->id;
+
+        $minDate = $lastPeriod->start_date;
+        $maxDate = $lastPeriod->end_date;
+
+        if ($date < DateTime::createFromFormat('Y-m-d', $minDate) ||
+            $date > DateTime::createFromFormat('Y-m-d', $maxDate)) {
+            throw new \Exception("Current date is outside current advising period ($lastPeriod->start_date - $lastPeriod->end_date)");
+        }
+
+        return Timeslot::create([
+            'adviser_id' => $adviserId,
+            'period_id' => $lastPeriod->id,
+            'date' => $date->format('Y-m-d'),
+            'time' => $time->format('H:i:s'),
+        ]);
+    }
 }
