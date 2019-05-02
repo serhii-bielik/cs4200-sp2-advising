@@ -194,12 +194,21 @@ class User extends Authenticatable
 
     public function addPeriod($startDate, $endDate)
     {
-        $date = DateTime::createFromFormat('Y-m-d', $startDate);
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
 
-        $year = intval($date->format('Y'));
+        if ($lastPeriod) {
+            $lastPeriodEndDate = DateTime::createFromFormat('Y-m-d', $lastPeriod->end_date);
+
+            if ($startDate <= $lastPeriodEndDate) {
+                throw new \Exception('The new period can not be earlier than the last day of the latest period ' .
+                    "($lastPeriod->start_date - $lastPeriod->end_date)");
+            }
+        }
+
+        $year = intval($startDate->format('Y'));
         $semester = 1;
 
-        $month = intval($date->format('n'));
+        $month = intval($startDate->format('n'));
         if ($month >= 1 && $month <= 5) {
             $semester = 2;
             $year--;
@@ -212,7 +221,7 @@ class User extends Authenticatable
             'director_id' => $this->id,
             'semester' => $semester,
             'year' => $year,
-            'start_date' => $startDate,
+            'start_date' => $startDate->format('Y-m-d'),
             'end_date' => $endDate
         ]);
     }

@@ -127,8 +127,8 @@
 
             addPeriod: function () {
                 axios.post('/api/director/periods',{
-                    startDate: '2019-07-15',
-                    endDate: '2019-07-25'
+                    startDate: '2019-04-01',
+                    endDate: '2019-04-25'
                 }).then(response => this.period = response.data)
                     .catch(error => console.error(error));
             },
@@ -145,7 +145,7 @@
 
             rmPeriod: function () {
                 axios.post('/api/director/period/remove',{
-                    id: 6,
+                    id: 8,
                 }).then(response => this.period = response.data)
                     .catch(error => console.error(error));
             },

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Period;
 use App\User;
 use App\UserGroup;
+use DateTime;
 
 class DirectorController extends Controller
 {
@@ -86,10 +87,25 @@ class DirectorController extends Controller
         $this->isDirector();
 
         $director = auth()->user();
-        $startDate = request('startDate');
-        $endDate = request('endDate');
 
-        $director->addPeriod($startDate, $endDate);
+        $startDate = DateTime::createFromFormat('Y-m-d', request('startDate'));
+        if (!$startDate) {
+            return response()->json(['error' => 'Invalid startDate format. Please use: Y-m-d'], 400);
+        }
+        $endDate = DateTime::createFromFormat('Y-m-d', request('endDate'));
+        if (!$endDate) {
+            return response()->json(['error' => 'Invalid endDate format. Please use: Y-m-d'], 400);
+        }
+
+        if ($endDate <= $startDate) {
+            return response()->json(['error' => 'startDate can not be greater than endDate'], 400);
+        }
+
+        try {
+            $director->addPeriod($startDate, $endDate);
+        } catch (\Exception $exception) {
+            return response()->json(['error' => $exception->getMessage()], 400);
+        }
 
         return Period::get();
     }
