@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\UserGroup;
+use DateTime;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
@@ -93,5 +94,38 @@ class StudentController extends Controller
         $student->addMessage($student->id, $student->studentAdviser[0]->id, request('message'));
 
         return $this->messages();
+    }
+
+    public function timeslots()
+    {
+        $this->isStudent();
+
+        return auth()->user()->getStudentTimeslots();
+    }
+
+    public function timeslotsByDate()
+    {
+        $this->isStudent();
+
+        $date = DateTime::createFromFormat('Y-m-d', request('date'));
+        if (!$date) {
+            return response()->json(['error' => 'Invalid date format. Please use: Y-m-d'], 400);
+        }
+
+        return auth()->user()->getStudentTimeslotsForDate($date->format('Y-m-d'));
+    }
+
+    public function makeReservation()
+    {
+        $this->isStudent();
+
+        $timeslotId = request('timeslot_id');
+
+        // TODO User has regestration in this period
+        try {
+            return auth()->user()->makeReservation($timeslotId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
     }
 }

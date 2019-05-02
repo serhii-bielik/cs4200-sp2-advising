@@ -5,6 +5,7 @@ namespace App;
 use DateTime;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use mysql_xdevapi\Exception;
 
 class User extends Authenticatable
 {
@@ -273,5 +274,84 @@ class User extends Authenticatable
             'date' => $date->format('Y-m-d'),
             'time' => $time->format('H:i:s'),
         ]);
+    }
+
+    public function getStudentTimeslots()
+    {
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        $adviser = auth()->user()->studentAdviser;
+
+        if (!$adviser || !$lastPeriod) {
+            return [];
+        }
+
+        $timeslots = Timeslot::select('date')
+            ->where('adviser_id', $adviser[0]->id)
+            ->where('period_id', $lastPeriod->id)
+            ->groupBy('date')
+            ->get();
+
+        return $timeslots;
+    }
+
+    public function getStudentTimeslotsForDate($date)
+    {
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        $adviser = auth()->user()->studentAdviser;
+
+        if (!$adviser || !$lastPeriod) {
+            return [];
+        }
+
+        $timeslots = Timeslot::select('id', 'time')->where('adviser_id', $adviser[0]->id)
+            ->where('period_id', $lastPeriod->id)
+            ->where('date', $date)
+            ->with('isReserved')
+            ->get();
+
+        return $timeslots;
+    }
+
+    public function makeReservation($timeslotId)
+    {
+        //TODO: Is already advised
+        //TODO: Is have active reservation
+
+        if ($reservation = auth()->user()->getReservation()) {
+            throw new \Exception("You already have reservation in this advising period.");
+        }
+
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        if (!$lastPeriod) {
+            throw new \Exception("Advising period is not yet created");
+        }
+
+        $adviser = auth()->user()->studentAdviser;
+        if (!$adviser) {
+            throw new \Exception("You do not have adviser yet");
+        }
+
+        $timeslot = Timeslot::where('id', $timeslotId)
+            ->where('adviser_id', $adviser[0]->id)
+            ->where('period_id', $lastPeriod->id)
+            ->first();
+
+        if (!$timeslot) {
+            throw new \Exception("Timeslot was not found in the system");
+        }
+
+        if ($timeslot->isReserved) {
+            throw new \Exception("Timeslot is reserved already");
+        }
+
+        return $timeslot->makeReservation(auth()->user()->id);
+    }
+
+    public function getReservation()
+    {
+        return false;
+//        $userReservation = Reservation::where('advisee_id', $adviser[0]->id)
+//            ->where('status_id', $lastPeriod->id)
+//            ->first();
     }
 }

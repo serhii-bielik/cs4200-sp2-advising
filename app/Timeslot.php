@@ -17,4 +17,19 @@ class Timeslot extends Model
         return $this->hasOne('App\Reservation', 'timeslot_id')
             ->where('status_id', ReservationStatus::Booked)->limit(1);
     }
+
+    public function isReserved()
+    {
+        return $this->hasOne('App\Reservation', 'timeslot_id')
+            ->select('timeslot_id', 'id')->where('status_id', ReservationStatus::Booked)->limit(1);
+    }
+
+    public function makeReservation($userId)
+    {
+        return Reservation::create([
+            'advisee_id' => $userId,
+            'timeslot_id' => $this->id,
+            'status_id' => ReservationStatus::Booked,
+        ]);
+    }
 }

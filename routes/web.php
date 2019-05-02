@@ -69,6 +69,10 @@ Route::post('/student/messages', 'StudentController@addMessage');
 Route::get('/student/settings', 'UserController@settings');
 Route::post('/student/settings', 'UserController@setSettings');
 
+Route::get('/student/timeslots', 'StudentController@timeslots');
+Route::get('/student/timeslots/{date}', 'StudentController@timeslotsByDate');
+Route::post('/student/makeReservation', 'StudentController@makeReservation');
+
 // Admin Routes
 
 Route::get('/admin/advisers', 'AdminController@advisers');

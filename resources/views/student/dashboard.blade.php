@@ -27,6 +27,9 @@
 
         <p>@{{ settings }}</p>
         <button v-on:click="setSettings">Settings</button>
+
+        <p>@{{ timeslot }}</p>
+        <button v-on:click="makeReservation">Reservation</button>
     </div>
 
     <hr>
@@ -45,6 +48,7 @@
             message: '',
             chat: '',
             settings: '',
+            timeslot: '',
         },
         methods: {
             onNotification: function () {
@@ -73,6 +77,13 @@
                     phone: '0111111111',
                     is_notification: 0,
                 }).then(response => this.settings = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            makeReservation: function () {
+                axios.post('/api/student/makeReservation',{
+                    timeslot_id: 27,
+                }).then(response => this.timeslot = response.data)
                     .catch(error => console.error(error));
             },
         }
