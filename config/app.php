@@ -13,7 +13,18 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'Advising Scheduling System'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Minimum time before advising appointment to cancel
+    |--------------------------------------------------------------------------
+    |
+    | This value is the minimum time in seconds to cancel appointment. After that
+    | appointment cannot be canceled.
+    |
+    */
+    'restrictReservationCancellationTime' => 86400,
 
     /*
     |--------------------------------------------------------------------------
