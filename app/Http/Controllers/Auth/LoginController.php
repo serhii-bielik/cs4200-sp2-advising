@@ -65,7 +65,7 @@ class LoginController extends Controller
         try {
             $user = Socialite::driver('google')->user();
         } catch (\Exception $e) {
-            session()->flash('message', "There is a problem with Google Authorisation");
+            session()->flash('message', "A problem with Google Authorisation occurred. Please try again.");
             session()->flash('alert-class', 'alert-danger');
             return redirect('/');
         }
