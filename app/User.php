@@ -5,6 +5,7 @@ namespace App;
 use DateTime;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\DB;
 use mysql_xdevapi\Exception;
 
 class User extends Authenticatable
@@ -49,7 +50,7 @@ class User extends Authenticatable
                 AdviserAdvisee::create([
                    'adviser_id' => $adviserId,
                    'advisee_id' => $studentId,
-                   'director_id' => auth()->user()->id,
+                   'director_id' => $this->id,
                 ]);
             }
         }
@@ -230,10 +231,9 @@ class User extends Authenticatable
     public function getTimeslotsForLastPeriod()
     {
         $lastPeriod = Period::orderBy('start_date', 'desc')->first();
-        $adviserId = auth()->user()->id;
 
         $timeslots = Timeslot::select('date')
-            ->where('adviser_id', $adviserId)
+            ->where('adviser_id', $this->id)
             ->where('period_id', $lastPeriod->id)
             ->groupBy('date')
             ->get();
@@ -244,9 +244,8 @@ class User extends Authenticatable
     public function getTimeslotsForDate($date)
     {
         $lastPeriod = Period::orderBy('start_date', 'desc')->first();
-        $adviserId = auth()->user()->id;
 
-        $timeslots = Timeslot::where('adviser_id', $adviserId)
+        $timeslots = Timeslot::where('adviser_id', $this->id)
             ->where('period_id', $lastPeriod->id)
             ->where('date', $date)
             ->with('activeReservation')
@@ -258,7 +257,6 @@ class User extends Authenticatable
     public function addTimeslotForDate($date, $time)
     {
         $lastPeriod = Period::orderBy('start_date', 'desc')->first();
-        $adviserId = auth()->user()->id;
 
         $minDate = $lastPeriod->start_date;
         $maxDate = $lastPeriod->end_date;
@@ -269,7 +267,7 @@ class User extends Authenticatable
         }
 
         return Timeslot::create([
-            'adviser_id' => $adviserId,
+            'adviser_id' => $this->id,
             'period_id' => $lastPeriod->id,
             'date' => $date->format('Y-m-d'),
             'time' => $time->format('H:i:s'),
@@ -279,7 +277,7 @@ class User extends Authenticatable
     public function getStudentTimeslots()
     {
         $lastPeriod = Period::orderBy('start_date', 'desc')->first();
-        $adviser = auth()->user()->studentAdviser;
+        $adviser = $this->studentAdviser;
 
         if (!$adviser || !$lastPeriod) {
             return [];
@@ -297,7 +295,7 @@ class User extends Authenticatable
     public function getStudentTimeslotsForDate($date)
     {
         $lastPeriod = Period::orderBy('start_date', 'desc')->first();
-        $adviser = auth()->user()->studentAdviser;
+        $adviser = $this->studentAdviser;
 
         if (!$adviser || !$lastPeriod) {
             return [];
@@ -314,21 +312,23 @@ class User extends Authenticatable
 
     public function makeReservation($timeslotId)
     {
-        //TODO: Is already advised
-        //TODO: Is have active reservation
-
-        if ($reservation = auth()->user()->getReservation()) {
-            throw new \Exception("You already have reservation in this advising period.");
-        }
-
         $lastPeriod = Period::orderBy('start_date', 'desc')->first();
         if (!$lastPeriod) {
             throw new \Exception("Advising period is not yet created");
         }
 
-        $adviser = auth()->user()->studentAdviser;
+        $adviser = $this->studentAdviser;
         if (!$adviser) {
             throw new \Exception("You do not have adviser yet");
+        }
+
+        $reservation = $this->getCurrentReservation($lastPeriod->id, $adviser[0]->id);
+        if ($reservation) {
+            if ($reservation->status_id == ReservationStatus::Booked) {
+                throw new \Exception("You already have active reservation in this advising period.");
+            } else if ($reservation->status_id == ReservationStatus::Advised) {
+                throw new \Exception("You already advised in this advising period.");
+            }
         }
 
         $timeslot = Timeslot::where('id', $timeslotId)
@@ -344,14 +344,16 @@ class User extends Authenticatable
             throw new \Exception("Timeslot is reserved already");
         }
 
-        return $timeslot->makeReservation(auth()->user()->id);
+        return $timeslot->makeReservation($this->id);
     }
 
-    public function getReservation()
+    public function getCurrentReservation($lastPeriodId, $adviserId)
     {
-        return false;
-//        $userReservation = Reservation::where('advisee_id', $adviser[0]->id)
-//            ->where('status_id', $lastPeriod->id)
-//            ->first();
+        return Reservation::where('advisee_id', $this->id)
+            ->whereIn('timeslot_id', Timeslot::select('id')
+                                    ->where('period_id', $lastPeriodId)
+                                    ->where('adviser_id', $adviserId)
+                                    ->whereIn('status_id', [ReservationStatus::Advised, ReservationStatus::Booked]))
+            ->first();
     }
 }
