@@ -71,6 +71,7 @@ Route::post('/student/settings', 'UserController@setSettings');
 
 Route::get('/student/timeslots', 'StudentController@timeslots');
 Route::get('/student/timeslots/{date}', 'StudentController@timeslotsByDate');
+Route::get('/student/reservation', 'StudentController@getReservation');
 Route::post('/student/reservation/make', 'StudentController@makeReservation');
 Route::post('/student/reservation/cancel', 'StudentController@cancelReservation');
 

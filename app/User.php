@@ -388,4 +388,32 @@ class User extends Authenticatable
 
         return $reservation;
     }
+
+    public function getStudentReservation()
+    {
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        if (!$lastPeriod) {
+            throw new \Exception("Advising period is not yet created");
+        }
+
+        $adviser = $this->studentAdviser;
+        if (!$adviser) {
+            throw new \Exception("You do not have adviser yet");
+        }
+
+        $reservation = $this->getCurrentReservation($lastPeriod->id, $adviser[0]->id);
+
+        if ($reservation) {
+            if ($reservation->status_id == ReservationStatuses::Advised) {
+                throw new \Exception("You already advised in this advising period.");
+            }
+
+            $reservation->status;
+            $reservation->timeslot;
+
+            return $reservation;
+        }
+
+        throw new \Exception("You don't have active reservation yet.");
+    }
 }

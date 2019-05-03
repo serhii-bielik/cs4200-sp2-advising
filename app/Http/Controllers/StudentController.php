@@ -140,4 +140,15 @@ class StudentController extends Controller
             return response()->json(['error' => $message->getMessage()], 400);
         }
     }
+
+    public function getReservation()
+    {
+        $this->isStudent();
+
+        try {
+            return auth()->user()->getStudentReservation();
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
 }
