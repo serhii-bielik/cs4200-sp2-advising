@@ -1,8 +1,8 @@
 <?php
 
-namespace App;
+namespace App\Structures;
 
-abstract class ReservationStatus
+abstract class ReservationStatuses
 {
     const Booked = 1;
     const Canceled = 2;

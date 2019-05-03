@@ -119,11 +119,23 @@ class StudentController extends Controller
     {
         $this->isStudent();
 
-        $timeslotId = request('timeslot_id');
+        $timeslotId = intval(request('timeslot_id'));
 
-        // TODO User has regestration in this period
         try {
             return auth()->user()->makeReservation($timeslotId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
+    public function cancelReservation()
+    {
+        $this->isStudent();
+
+        $reservationId = intval(request('reservation_id'));
+
+        try {
+            return auth()->user()->cancelReservation($reservationId);
         } catch (\Exception $message) {
             return response()->json(['error' => $message->getMessage()], 400);
         }

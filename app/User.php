@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Structures\ReservationStatuses;
 use DateTime;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -324,9 +325,9 @@ class User extends Authenticatable
 
         $reservation = $this->getCurrentReservation($lastPeriod->id, $adviser[0]->id);
         if ($reservation) {
-            if ($reservation->status_id == ReservationStatus::Booked) {
+            if ($reservation->status_id == ReservationStatuses::Booked) {
                 throw new \Exception("You already have active reservation in this advising period.");
-            } else if ($reservation->status_id == ReservationStatus::Advised) {
+            } else if ($reservation->status_id == ReservationStatuses::Advised) {
                 throw new \Exception("You already advised in this advising period.");
             }
         }
@@ -353,7 +354,38 @@ class User extends Authenticatable
             ->whereIn('timeslot_id', Timeslot::select('id')
                                     ->where('period_id', $lastPeriodId)
                                     ->where('adviser_id', $adviserId)
-                                    ->whereIn('status_id', [ReservationStatus::Advised, ReservationStatus::Booked]))
+                                    ->whereIn('status_id', [ReservationStatuses::Advised, ReservationStatuses::Booked]))
             ->first();
+    }
+
+    public function cancelReservation($reservationId)
+    {
+        $reservation = Reservation::where('id', $reservationId)
+            ->where('advisee_id', $this->id)
+            ->first();
+
+        if (!$reservation) {
+            throw new \Exception("Reservation was not found in the system or it is not related to your account.");
+        }
+
+        if ($reservation->status_id != ReservationStatuses::Booked) {
+            throw new \Exception("Reservation has wrong status (should be 'Booked')");
+        }
+
+        $timeslot = $reservation->timeslot;
+
+        $timeslotDateTime = DateTime::createFromFormat('Y-m-d H:i:s', "$timeslot->date $timeslot->time");
+        $nowDateTime = new DateTime();
+        $minTime = config('app.restrictReservationCancellationTime');
+
+        if ($timeslotDateTime->getTimestamp() - $nowDateTime->getTimestamp() < $minTime) {
+            throw new \Exception("Too late to cancel this reservation.");
+        }
+
+        $reservation->cancel($this->id);
+
+        $reservation->status;
+
+        return $reservation;
     }
 }
