@@ -36,6 +36,7 @@
         <button v-on:click="addPeriod">Add Period (Director API)</button>
         <button v-on:click="rmPeriod">Rm Period (Director API)</button>
         <button v-on:click="addTimeslot">Add Timeslot</button>
+        <button v-on:click="cancelReservation">Cancel Reservation</button>
 
         <p>@{{ settings }}</p>
         <button v-on:click="setSettings">Update Settings</button>
@@ -153,6 +154,13 @@
             addTimeslot: function () {
                 axios.post('/api/adviser/timeslots/2019-10-15',{
                     time: '12:00',
+                }).then(response => this.period = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            cancelReservation: function () {
+                axios.post('/api/adviser/reservation/cancel',{
+                    reservation_id: 18,
                 }).then(response => this.period = response.data)
                     .catch(error => console.error(error));
             },

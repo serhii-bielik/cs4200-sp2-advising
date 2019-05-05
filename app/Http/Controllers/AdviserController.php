@@ -218,4 +218,17 @@ class AdviserController extends Controller
             return response()->json(['error' => $message->getMessage()], 400);
         }
     }
+
+    public function cancelReservation()
+    {
+        $this->isAdviser();
+
+        $reservationId = intval(request('reservation_id'));
+
+        try {
+            return auth()->user()->cancelReservation($reservationId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
 }

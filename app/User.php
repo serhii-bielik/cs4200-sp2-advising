@@ -360,9 +360,15 @@ class User extends Authenticatable
 
     public function cancelReservation($reservationId)
     {
-        $reservation = Reservation::where('id', $reservationId)
-            ->where('advisee_id', $this->id)
-            ->first();
+        if ($this->group_id == UserGroup::Student) {
+            $reservation = Reservation::where('id', $reservationId)
+                ->where('advisee_id', $this->id)
+                ->first();
+        } else {
+            // TODO: Only adviser's student reservation (optional)
+            $reservation = Reservation::where('id', $reservationId)
+                ->first();
+        }
 
         if (!$reservation) {
             throw new \Exception("Reservation was not found in the system or it is not related to your account.");
