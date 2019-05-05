@@ -78,9 +78,20 @@ class User extends Authenticatable
         return $this->belongsTo('App\Faculty', 'faculty_id', 'id');
     }
 
+    public function reservation()
+    {
+        // TODO: Period control, exclude data from previous period.
+
+        return $this->hasOne('App\Reservation', 'advisee_id', 'id')
+            ->with('status')
+            ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised, ReservationStatuses::Missed])
+            ->orderByDesc('created_at');
+    }
+
     public function students()
     {
-        return $this->belongsToMany('App\User', 'adviser_advisee', 'adviser_id', 'advisee_id')->with('faculty');
+        return $this->belongsToMany('App\User', 'adviser_advisee', 'adviser_id', 'advisee_id')
+            ->with('faculty', 'reservation');
     }
 
     public function lastPublicNoteForStudent()
