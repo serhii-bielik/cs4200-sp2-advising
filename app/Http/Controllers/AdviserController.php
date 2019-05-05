@@ -43,6 +43,7 @@ class AdviserController extends Controller
 
         $student = User::where('group_id', UserGroup::Student)->where('id', $studentId)->first();
         $student->faculty;
+        $student->reservation;
 
         return $student;
     }
