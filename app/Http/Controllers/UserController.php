@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Faculty;
+use App\Period;
+use App\Timeslot;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -68,10 +70,19 @@ class UserController extends Controller
         }
 
         if (!$user->isStudent()) {
-            // TODO: Remove timeslots for current period!
+
             $interval = request('interval');
             if (isset($interval)) {
-                $user->interval = $interval;
+                if ($user->interval != $interval) {
+
+                    $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+
+                    Timeslot::where('adviser_id', $user->id)
+                        ->where('period_id', $lastPeriod->id)
+                        ->delete();
+
+                    $user->interval = $interval;
+                }
             }
         }
 

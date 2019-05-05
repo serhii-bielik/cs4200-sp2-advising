@@ -136,10 +136,10 @@
 
             setSettings: function () {
                 axios.post('/api/adviser/settings',{
-                    phone: '0999111888',
-                    office: 'VMS9999',
+                    phone: '0999111887',
+                    office: 'VMS9997',
                     is_notification: 0,
-                    interval: 30
+                    interval: 40
                 }).then(response => this.settings = response.data)
                     .catch(error => console.error(error));
             },
