@@ -416,4 +416,20 @@ class User extends Authenticatable
 
         throw new \Exception("You don't have active reservation yet.");
     }
+
+    public function getAdviserReservations()
+    {
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        if (!$lastPeriod) {
+            throw new \Exception("Advising period is not yet created");
+        }
+
+        return Reservation::whereIn('timeslot_id', Timeslot::select('id')
+                ->where('period_id', $lastPeriod->id)
+                ->where('adviser_id', $this->id)
+                ->where('status_id', ReservationStatuses::Booked))
+            ->with('timeslot', 'student')
+            ->get();
+
+    }
 }

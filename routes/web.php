@@ -55,6 +55,8 @@ Route::get('/adviser/timeslots', 'AdviserController@timeslots');
 Route::get('/adviser/timeslots/{date}', 'AdviserController@timeslotsByDate');
 Route::post('/adviser/timeslots/{date}', 'AdviserController@addTimeslotForDate');
 
+Route::get('/adviser/reservations', 'AdviserController@getReservations');
+
 // Student Routes
 
 Route::get('/student', 'StudentController@dashboard');

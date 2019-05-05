@@ -18,6 +18,11 @@ class Reservation extends Model
         return $this->belongsTo('App\Timeslot', 'timeslot_id');
     }
 
+    public function student()
+    {
+        return $this->belongsTo('App\User', 'advisee_id')->select('id', 'name', 'email', 'phone');
+    }
+
     public function status()
     {
         return $this->hasOne('App\ReservationStatus', 'id', 'status_id');
