@@ -371,23 +371,7 @@ class User extends Authenticatable
 
     public function cancelReservation($reservationId)
     {
-        if ($this->group_id == UserGroup::Student) {
-            $reservation = Reservation::where('id', $reservationId)
-                ->where('advisee_id', $this->id)
-                ->first();
-        } else {
-            // TODO: Only adviser's student reservation (optional)
-            $reservation = Reservation::where('id', $reservationId)
-                ->first();
-        }
-
-        if (!$reservation) {
-            throw new \Exception("Reservation was not found in the system or it is not related to your account.");
-        }
-
-        if ($reservation->status_id != ReservationStatuses::Booked) {
-            throw new \Exception("Reservation has wrong status (should be 'Booked')");
-        }
+        $reservation = $this->getReservationById($reservationId);
 
         $timeslot = $reservation->timeslot;
 
@@ -400,6 +384,17 @@ class User extends Authenticatable
         }
 
         $reservation->cancel($this->id);
+
+        $reservation->status;
+
+        return $reservation;
+    }
+
+    public function attendReservation($reservationId)
+    {
+        $reservation = $this->getReservationById($reservationId);
+
+        $reservation->attend($this->id);
 
         $reservation->status;
 
@@ -448,5 +443,33 @@ class User extends Authenticatable
             ->with('timeslot', 'student')
             ->get();
 
+    }
+
+    /**
+     * @param $reservationId
+     * @return mixed
+     * @throws \Exception
+     */
+    private function getReservationById($reservationId)
+    {
+        if ($this->group_id == UserGroup::Student) {
+            $reservation = Reservation::where('id', $reservationId)
+                ->where('advisee_id', $this->id)
+                ->first();
+        } else {
+            // TODO: Only adviser's student reservation (optional)
+            $reservation = Reservation::where('id', $reservationId)
+                ->first();
+        }
+
+        if (!$reservation) {
+            throw new \Exception("Reservation was not found in the system or it is not related to your account.");
+        }
+
+        if ($reservation->status_id != ReservationStatuses::Booked) {
+            throw new \Exception("Reservation has wrong status (should be 'Booked')");
+        }
+
+        return $reservation;
     }
 }

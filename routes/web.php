@@ -57,6 +57,7 @@ Route::post('/adviser/timeslots/{date}', 'AdviserController@addTimeslotForDate')
 
 Route::get('/adviser/reservations', 'AdviserController@getReservations');
 Route::post('/adviser/reservation/cancel', 'AdviserController@cancelReservation');
+Route::post('/adviser/reservation/attend', 'AdviserController@attendReservation');
 
 // Student Routes
 

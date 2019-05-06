@@ -34,4 +34,11 @@ class Reservation extends Model
         $this->closed_by = $userId;
         $this->save();
     }
+
+    public function attend($userId)
+    {
+        $this->status_id = ReservationStatuses::Advised;
+        $this->closed_by = $userId;
+        $this->save();
+    }
 }
