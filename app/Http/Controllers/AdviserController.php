@@ -176,6 +176,19 @@ class AdviserController extends Controller
         return auth()->user()->getTimeslotsForLastPeriod();
     }
 
+    public function removeTimeslot()
+    {
+        $this->isAdviser();
+
+        $timeslotId = intval(request('timeslot_id'));
+
+        try {
+            return auth()->user()->removeTimeslotById($timeslotId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
     public function timeslotsByDate()
     {
         $this->isAdviser();

@@ -54,6 +54,7 @@ Route::post('/adviser/notes/private', 'AdviserController@addPrivateNote');
 Route::get('/adviser/timeslots', 'AdviserController@timeslots');
 Route::get('/adviser/timeslots/{date}', 'AdviserController@timeslotsByDate');
 Route::post('/adviser/timeslots/{date}', 'AdviserController@addTimeslotForDate');
+Route::post('/adviser/timeslot/remove', 'AdviserController@removeTimeslot');
 
 Route::get('/adviser/reservations', 'AdviserController@getReservations');
 Route::post('/adviser/reservation/cancel', 'AdviserController@cancelReservation');

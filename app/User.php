@@ -322,6 +322,21 @@ class User extends Authenticatable
         return $timeslots;
     }
 
+    public function removeTimeslotById($timeslotId)
+    {
+        $timeslot = Timeslot::where('id', $timeslotId)
+            ->where('adviser_id', $this->id)
+            ->first();
+
+        if (!$timeslot) {
+            throw new \Exception("Timeslot was not found in the system");
+        }
+
+        $timeslot->delete();
+
+        return ['status' => 'success'];
+    }
+
     public function makeReservation($timeslotId)
     {
         $lastPeriod = Period::orderBy('start_date', 'desc')->first();
