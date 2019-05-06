@@ -390,12 +390,35 @@ class User extends Authenticatable
         return $reservation;
     }
 
+    private function isTooEarlyToChangeReservationStatus($timeslot)
+    {
+        $timeslotDateTime = DateTime::createFromFormat('Y-m-d H:i:s', "$timeslot->date $timeslot->time");
+        $nowDateTime = new DateTime();
+
+        if ($timeslotDateTime->getTimestamp() - ($nowDateTime->getTimestamp() + 10*60) > 0) {
+            throw new \Exception("Too early to change this reservation's status.");
+        }
+    }
+
     public function attendReservation($reservationId)
     {
         $reservation = $this->getReservationById($reservationId);
 
-        $reservation->attend($this->id);
+        $this->isTooEarlyToChangeReservationStatus($reservation->timeslot);
 
+        $reservation->attend($this->id);
+        $reservation->status;
+
+        return $reservation;
+    }
+
+    public function missReservation($reservationId)
+    {
+        $reservation = $this->getReservationById($reservationId);
+
+        $this->isTooEarlyToChangeReservationStatus($reservation->timeslot);
+
+        $reservation->miss($this->id);
         $reservation->status;
 
         return $reservation;

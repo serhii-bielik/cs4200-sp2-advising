@@ -41,4 +41,11 @@ class Reservation extends Model
         $this->closed_by = $userId;
         $this->save();
     }
+
+    public function miss($userId)
+    {
+        $this->status_id = ReservationStatuses::Missed;
+        $this->closed_by = $userId;
+        $this->save();
+    }
 }

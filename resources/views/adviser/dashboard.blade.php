@@ -38,6 +38,7 @@
         <button v-on:click="addTimeslot">Add Timeslot</button>
         <button v-on:click="cancelReservation">Cancel Reservation</button>
         <button v-on:click="attendReservation">Attend Reservation</button>
+        <button v-on:click="missReservation">Miss Reservation</button>
 
         <p>@{{ settings }}</p>
         <button v-on:click="setSettings">Update Settings</button>
@@ -168,6 +169,13 @@
 
             attendReservation: function () {
                 axios.post('/api/adviser/reservation/attend',{
+                    reservation_id: 9,
+                }).then(response => this.period = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            missReservation: function () {
+                axios.post('/api/adviser/reservation/miss',{
                     reservation_id: 9,
                 }).then(response => this.period = response.data)
                     .catch(error => console.error(error));
