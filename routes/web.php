@@ -31,6 +31,8 @@ Route::get('/director/periods', 'DirectorController@periods');
 Route::post('/director/periods', 'DirectorController@addPeriod');
 Route::post('/director/period/remove', 'DirectorController@removePeriod');
 
+Route::get('/director/report', 'DirectorController@report');
+
 // Adviser Routes
 
 Route::get('/adviser', 'AdviserController@dashboard');

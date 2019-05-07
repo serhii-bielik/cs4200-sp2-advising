@@ -123,4 +123,15 @@ class DirectorController extends Controller
 
         return Period::get();
     }
+
+    public function report()
+    {
+        $this->isDirector();
+
+        try {
+            return auth()->user()->getDirectorStats();
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
 }

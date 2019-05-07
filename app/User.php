@@ -162,7 +162,15 @@ class User extends Authenticatable
     public function studentAdviser()
     {
         return $this->belongsToMany('App\User', 'adviser_advisee', 'advisee_id', 'adviser_id')
-                ->orderByDesc('adviser_advisee.id')->limit(1)->select('user.id', 'user.name', 'user.email', 'user.phone', 'user.office');
+            ->select('user.id', 'user.au_id', 'user.name', 'user.email', 'user.phone', 'user.office')
+            ->orderByDesc('adviser_advisee.id')->limit(1);
+    }
+
+    public function adviser()
+    {
+        return $this->belongsToMany('App\User', 'adviser_advisee', 'advisee_id', 'adviser_id', 'id')
+            ->select('user.id', 'user.au_id', 'user.name', 'user.email', 'user.phone', 'user.office')
+            ->orderByDesc('adviser_advisee.id');
     }
 
     private function getAdviserAdviseeChatId($studentId, $adviserId)
@@ -589,6 +597,58 @@ class User extends Authenticatable
             ->with('sender')
             ->limit(5)
             ->get();
+
+        return $stats;
+    }
+
+    public function getDirectorStats()
+    {
+        $stats = [];
+
+        $stats['total_advisee'] = User::select('id')
+            ->where('group_id', UserGroup::Student)
+            ->count();
+
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        if (!$lastPeriod) {
+            $stats['total_reserved'] = 0;
+            $stats['total_attended'] = 0;
+            $stats['total_canceled'] = 0;
+            $stats['total_missed'] = 0;
+            $stats['total_unreserved'] = 0;
+
+            $stats['unreserved_user'] = [];
+        }
+
+        $stats['total_reserved'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('status_id', ReservationStatuses::Booked))
+            ->count();
+
+        $stats['total_attended'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('status_id', ReservationStatuses::Advised))
+            ->count();
+
+        $stats['total_canceled'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('status_id', ReservationStatuses::Canceled))
+            ->count();
+
+        $stats['total_missed'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('status_id', ReservationStatuses::Missed))
+            ->count();
+
+        $total_unreserved = User::where('group_id', UserGroup::Student)
+            ->whereNotIn('id', Reservation::select('advisee_id')
+                ->whereIn('timeslot_id', Timeslot::select('id')
+                    ->where('period_id', $lastPeriod->id)
+                    ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised])))
+            ->with('faculty', 'adviser')
+            ->get();
+        $stats['total_unreserved'] = $total_unreserved->count();
+        $stats['unreserved_user'] = $total_unreserved;
 
         return $stats;
     }
