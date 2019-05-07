@@ -134,4 +134,17 @@ class DirectorController extends Controller
             return response()->json(['error' => $message->getMessage()], 400);
         }
     }
+
+    public function adviserData()
+    {
+        $this->isDirector();
+
+        $adviserId = intval(request('adviserId'));
+
+        try {
+            return auth()->user()->getAdviserData($adviserId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
 }

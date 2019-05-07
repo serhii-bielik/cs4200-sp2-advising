@@ -652,4 +652,13 @@ class User extends Authenticatable
 
         return $stats;
     }
+
+    public function getAdviserData($adviserId)
+    {
+        $adviser = User::where('id', $adviserId)->first();
+
+        $adviser['report'] = $adviser->getAdviserStats();
+
+        return $adviser;
+    }
 }
