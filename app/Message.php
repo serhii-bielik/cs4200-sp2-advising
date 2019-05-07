@@ -17,4 +17,11 @@ class Message extends Model
     protected $casts = [
         'read_at' => 'timestamp',
     ];
+
+    public function sender()
+    {
+        return $this->belongsTo('App\User', 'sender_id')
+            ->select('id', 'name', 'email', 'phone', 'group_id')
+            ->with('group');
+    }
 }

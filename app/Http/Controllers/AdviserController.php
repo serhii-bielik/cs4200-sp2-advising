@@ -271,4 +271,15 @@ class AdviserController extends Controller
             return response()->json(['error' => $message->getMessage()], 400);
         }
     }
+
+    public function getStats()
+    {
+        $this->isAdviser();
+
+        try {
+            return auth()->user()->getAdviserStats();
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
 }

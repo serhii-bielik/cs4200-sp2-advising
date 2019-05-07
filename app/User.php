@@ -6,6 +6,7 @@ use App\Structures\ReservationStatuses;
 use DateTime;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use mysql_xdevapi\Exception;
 
@@ -92,6 +93,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany('App\User', 'adviser_advisee', 'adviser_id', 'advisee_id')
             ->with('faculty', 'reservation');
+    }
+
+    public function studentsCount()
+    {
+        return $this->belongsToMany('App\User', 'adviser_advisee', 'adviser_id', 'advisee_id')
+            ->count();
     }
 
     public function lastPublicNoteForStudent()
@@ -480,7 +487,6 @@ class User extends Authenticatable
                 ->where('status_id', ReservationStatuses::Booked))
             ->with('timeslot', 'student')
             ->get();
-
     }
 
     /**
@@ -509,5 +515,81 @@ class User extends Authenticatable
         }
 
         return $reservation;
+    }
+
+    public function getAdviserStats()
+    {
+        $stats = [];
+
+        $stats['total_advisee'] = $this->students->count();
+
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        if (!$lastPeriod) {
+            $stats['reserved'] = 0;
+            $stats['attended'] = 0;
+            $stats['canceled'] = 0;
+            $stats['missed'] = 0;
+
+            $stats['new_reservation'] = 0;
+            $stats['new_cancellation'] = 0;
+
+            $stats['today_reservation'] = [];
+        }
+
+        $stats['reserved'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('adviser_id', $this->id)
+            ->where('status_id', ReservationStatuses::Booked))
+            ->count();
+
+        $stats['attended'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('adviser_id', $this->id)
+            ->where('status_id', ReservationStatuses::Advised))
+            ->count();
+
+        $stats['canceled'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('adviser_id', $this->id)
+            ->where('status_id', ReservationStatuses::Canceled))
+            ->count();
+
+        $stats['missed'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('adviser_id', $this->id)
+            ->where('status_id', ReservationStatuses::Missed))
+            ->count();
+
+        $stats['new_reservation'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('adviser_id', $this->id)
+            ->where('status_id', ReservationStatuses::Booked))
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+
+        $stats['new_cancellation'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('adviser_id', $this->id)
+            ->where('status_id', ReservationStatuses::Canceled))
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+
+        $stats['today_reservation'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('adviser_id', $this->id)
+            ->whereDate('date', Carbon::today())
+            ->where('status_id', ReservationStatuses::Booked))
+            ->with('timeslot', 'student')
+            ->get();
+
+        $stats['recent_message'] = Message::whereIn('chat_id', AdviserAdvisee::select('id')
+                ->where('adviser_id', $this->id))
+            //->where('sender_id', '<>', $this->id) TODO: With or without "myself"
+            ->orderByDesc('created_at')
+            ->with('sender')
+            ->limit(5)
+            ->get();
+
+        return $stats;
     }
 }

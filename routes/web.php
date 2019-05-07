@@ -61,6 +61,8 @@ Route::post('/adviser/reservation/cancel', 'AdviserController@cancelReservation'
 Route::post('/adviser/reservation/attend', 'AdviserController@attendReservation');
 Route::post('/adviser/reservation/miss', 'AdviserController@missReservation');
 
+Route::get('/adviser/dashboard', 'AdviserController@getStats');
+
 // Student Routes
 
 Route::get('/student', 'StudentController@dashboard');
