@@ -162,7 +162,7 @@ class User extends Authenticatable
     public function studentAdviser()
     {
         return $this->belongsToMany('App\User', 'adviser_advisee', 'advisee_id', 'adviser_id')
-            ->select('user.id', 'user.au_id', 'user.name', 'user.email', 'user.phone', 'user.office')
+            ->select('user.id', 'user.au_id', 'user.name', 'user.email', 'user.phone', 'user.office', 'user.interval', 'user.avatar')
             ->orderByDesc('adviser_advisee.id')->limit(1);
     }
 
