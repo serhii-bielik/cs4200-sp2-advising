@@ -527,7 +527,7 @@ class User extends Authenticatable
         return $reservation;
     }
 
-    public function getAdviserStats()
+    public function getAdviserStats($withoutMessages = false)
     {
         $stats = [];
 
@@ -592,13 +592,15 @@ class User extends Authenticatable
             ->with('timeslot', 'student')
             ->get();
 
-        $stats['recent_message'] = Message::whereIn('chat_id', AdviserAdvisee::select('id')
+        if (!$withoutMessages) {
+            $stats['recent_message'] = Message::whereIn('chat_id', AdviserAdvisee::select('id')
                 ->where('adviser_id', $this->id))
-            //->where('sender_id', '<>', $this->id) TODO: With or without "myself"
-            ->orderByDesc('created_at')
-            ->with('sender')
-            ->limit(5)
-            ->get();
+                ->where('sender_id', '<>', $this->id) //TODO: With or without "myself"
+                ->orderByDesc('created_at')
+                ->with('sender')
+                ->limit(5)
+                ->get();
+        }
 
         return $stats;
     }
@@ -657,10 +659,13 @@ class User extends Authenticatable
 
     public function getAdviserData($adviserId)
     {
+        $adviserData = [];
+
         $adviser = User::where('id', $adviserId)->first();
+        $adviserData['adviser'] = $adviser;
+        
+        $adviserData['report'] = $adviser->getAdviserStats(true);
 
-        $adviser['report'] = $adviser->getAdviserStats();
-
-        return $adviser;
+        return $adviserData;
     }
 }
