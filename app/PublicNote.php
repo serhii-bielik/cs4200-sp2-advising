@@ -13,8 +13,4 @@ class PublicNote extends Model
     protected $fillable = [
         'advisee_id', 'created_by', 'note', 'created_at',
     ];
-
-    protected $casts = [
-        'created_at' => 'timestamp',
-    ];
 }
