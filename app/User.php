@@ -403,14 +403,16 @@ class User extends Authenticatable
     {
         $reservation = $this->getReservationById($reservationId);
 
-        $timeslot = $reservation->timeslot;
+        if ($this->group_id == UserGroup::Student) {
+            $timeslot = $reservation->timeslot;
 
-        $timeslotDateTime = DateTime::createFromFormat('Y-m-d H:i:s', "$timeslot->date $timeslot->time");
-        $nowDateTime = new DateTime();
-        $minTime = config('app.restrictReservationCancellationTime');
+            $timeslotDateTime = DateTime::createFromFormat('Y-m-d H:i:s', "$timeslot->date $timeslot->time");
+            $nowDateTime = new DateTime();
+            $minTime = config('app.restrictReservationCancellationTime');
 
-        if ($timeslotDateTime->getTimestamp() - $nowDateTime->getTimestamp() < $minTime) {
-            throw new \Exception("Too late to cancel this reservation.");
+            if ($timeslotDateTime->getTimestamp() - $nowDateTime->getTimestamp() < $minTime) {
+                throw new \Exception("Too late to cancel this reservation.");
+            }
         }
 
         $reservation->cancel($this->id);
