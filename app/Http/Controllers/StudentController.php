@@ -86,6 +86,20 @@ class StudentController extends Controller
         return $data;
     }
 
+    public function recentMessages()
+    {
+        $this->isStudent();
+
+        $student = User::where('id', auth()->user()->id)->with('studentAdviser')->first();
+        $data = $student->recentMessages($student->id, $student->studentAdviser[0]->id);
+
+        if ($data === -1) {
+            return response()->json(['error' => 'Adviser and students are not connected.'], 400);
+        }
+
+        return $data;
+    }
+
     public function addMessage()
     {
         $this->isStudent();

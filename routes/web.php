@@ -75,6 +75,7 @@ Route::get('/student/adviser', 'StudentController@adviser');
 Route::get('/student/info', 'StudentController@info');
 Route::get('/student/notification', 'StudentController@getNotification');
 Route::post('/student/notification', 'StudentController@setNotification');
+Route::get('/student/messages/recent', 'StudentController@recentMessages');
 Route::get('/student/messages', 'StudentController@messages');
 Route::post('/student/messages', 'StudentController@addMessage');
 Route::get('/student/settings', 'UserController@settings');

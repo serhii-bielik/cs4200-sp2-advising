@@ -196,6 +196,21 @@ class User extends Authenticatable
         return Message::where('chat_id', $chatId)->orderBy('id')->get();
     }
 
+    public function recentMessages($studentId, $adviserId)
+    {
+        $chatId = $this->getAdviserAdviseeChatId($studentId, $adviserId);
+
+        if ($chatId === null) {
+            return -1;
+        }
+
+        return Message::where('chat_id', $chatId)
+            ->where('sender_id', '<>', $studentId)
+            ->orderByDesc('created_at')
+            ->limit(5)
+            ->get();
+    }
+
     public function addMessage($studentId, $adviserId, $message)
     {
         $chatId = $this->getAdviserAdviseeChatId($studentId, $adviserId);
