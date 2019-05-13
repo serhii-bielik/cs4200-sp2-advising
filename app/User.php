@@ -46,25 +46,25 @@ class User extends Authenticatable
     public function addStudents(Array $students, $adviserId)
     {
         foreach ($students as $studentId) {
+
             $isAssigned = AdviserAdvisee::where('adviser_id', $adviserId)
                 ->where('advisee_id', $studentId)->first();
-            if (!isset($isAssigned)) {
+
+            if (!$isAssigned) {
+
+                $student = User::where('id', $studentId)
+                    ->where('group_id', UserGroup::Student)->first();
+                if (!$student) {
+                    throw new \Exception("Student #$studentId does not exists.");
+                }
+
+                AdviserAdvisee::where('advisee_id', $studentId)->delete();
+
                 AdviserAdvisee::create([
                    'adviser_id' => $adviserId,
                    'advisee_id' => $studentId,
                    'director_id' => $this->id,
                 ]);
-            }
-        }
-    }
-
-    public function dismissStudents(Array $students, $adviserId)
-    {
-        foreach ($students as $studentId) {
-            $isAssigned = AdviserAdvisee::where('adviser_id', $adviserId)
-                ->where('advisee_id', $studentId)->first();
-            if (isset($isAssigned)) {
-                $isAssigned->delete();
             }
         }
     }

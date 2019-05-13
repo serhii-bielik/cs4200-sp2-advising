@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\AdviserAdvisee;
 use App\Period;
 use App\User;
 use App\UserGroup;
@@ -27,12 +28,17 @@ class DirectorController extends Controller
         return User::where('group_id', UserGroup::Student)->with('faculty')->get();
     }
 
+    private function getUnassignedStudents()
+    {
+        return User::where('group_id', UserGroup::Student)->
+        doesntHave('studentAdviser')->get();
+    }
+
     public function unassignedStudents()
     {
         $this->isDirector();
 
-        return User::where('group_id', UserGroup::Student)->
-        doesntHave('studentAdviser')->get();
+        return $this->getUnassignedStudents();
     }
 
     public function advisers()
@@ -47,32 +53,41 @@ class DirectorController extends Controller
     {
         $this->isDirector();
 
-        //TODO: Validation
         $adviserId = intval(request('adviserId'));
-        $adviser = User::where('id', $adviserId)->first();
+        $adviser = User::where('id', $adviserId)
+            ->whereIn('group_id', [UserGroup::Adviser, UserGroup::Director])
+            ->first();
         if(!isset($adviser)) {
             return response()->json(['error' => 'Adviser does not exists.'], 400);
         }
 
-        $adviser->addStudents(request('studentIds'), $adviserId);
+        $studentIds = request('studentIds');
+        if (!count($studentIds)) {
+            return response()->json(['error' => 'Specify studentIds to assign'], 400);
+        }
 
-        return $adviser->students;
+        try {
+            auth()->user()->addStudents($studentIds, $adviserId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+
+        return $this->getUnassignedStudents();
     }
 
     public function dismiss()
     {
         $this->isDirector();
 
-        //TODO: Validation
-        $adviserId = intval(request('adviserId'));
-        $adviser = User::where('id', $adviserId)->first();
-        if(!isset($adviser)) {
-            return response()->json(['error' => 'Adviser does not exists.'], 400);
+        $studentIds = request('studentIds');
+
+        if (!count($studentIds)) {
+            return response()->json(['error' => 'Specify studentIds'], 400);
         }
 
-        $adviser->dismissStudents(request('studentIds'), $adviserId);
+        AdviserAdvisee::whereIn('advisee_id', $studentIds)->delete();
 
-        return $adviser->students;
+        return $this->getUnassignedStudents();
     }
 
     public function periods()

@@ -68,8 +68,8 @@
         methods: {
             assignStudents: function () {
 
-                const adviserId = 2;
-                const studentIds = [610, 611, 612, 613, 614];
+                const adviserId = 702;
+                const studentIds = [963, 964, 965, 960];
 
                 axios.post('/api/director/assign',{
                     adviserId: adviserId,
@@ -80,11 +80,9 @@
 
             dismissStudents: function () {
 
-                const adviserId = 2;
-                const studentIds = [610, 611, 612, 613, 614];
+                const studentIds = [963, 964, 965, 960];
 
                 axios.post('/api/director/dismiss',{
-                    adviserId: adviserId,
                     studentIds: studentIds
                 }).then(response => this.message = response.data)
                     .catch(error => console.error(error));
@@ -132,8 +130,8 @@
 
             addPeriod: function () {
                 axios.post('/api/director/periods',{
-                    startDate: '2019-04-01',
-                    endDate: '2019-04-25'
+                    startDate: '2019-04-10',
+                    endDate: '2019-04-31'
                 }).then(response => this.period = response.data)
                     .catch(error => console.error(error));
             },
