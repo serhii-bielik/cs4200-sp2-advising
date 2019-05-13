@@ -189,6 +189,24 @@ class AdviserController extends Controller
         }
     }
 
+    public function updateTimeslotsForDate()
+    {
+        $this->isAdviser();
+
+        $date = DateTime::createFromFormat('Y-m-d', request('date'));
+        if (!$date) {
+            return response()->json(['error' => 'Invalid date format. Please use: Y-m-d'], 400);
+        }
+
+        $timeslots = request('timeslots');
+
+        try {
+            return auth()->user()->updateTimeslotsForDate($date, $timeslots);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
     public function timeslotsByDate()
     {
         $this->isAdviser();

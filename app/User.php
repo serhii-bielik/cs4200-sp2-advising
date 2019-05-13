@@ -290,6 +290,7 @@ class User extends Authenticatable
         $timeslots = Timeslot::where('adviser_id', $this->id)
             ->where('period_id', $lastPeriod->id)
             ->where('date', $date)
+            ->orderby('time')
             ->with('activeReservation')
             ->get();
 
@@ -365,6 +366,34 @@ class User extends Authenticatable
         $timeslot->delete();
 
         return ['status' => 'success'];
+    }
+
+    public function updateTimeslotsForDate($dateRaw, $timeslotsRaw)
+    {
+        $date = $dateRaw->format('Y-m-d');
+        $timeslots = [];
+
+        foreach ($timeslotsRaw as $time) {
+            $t = DateTime::createFromFormat('H:i', $time);
+            if ($t) {
+                $timeslots[] = $t->format('H:i');
+            }
+        }
+
+        Timeslot::where('date', $date)
+            ->whereNotIn('time', $timeslots)
+            ->delete();
+
+        foreach ($timeslots as $time) {
+            $t = Timeslot::where('date', $date)
+                ->where('time', $time)
+                ->first();
+            if(!$t) {
+                $this->addTimeslotForDate($dateRaw, DateTime::createFromFormat('H:i', $time));
+            }
+        }
+
+        return $this->getTimeslotsForDate($date);
     }
 
     public function makeReservation($timeslotId)
