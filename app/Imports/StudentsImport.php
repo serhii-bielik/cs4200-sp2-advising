@@ -43,6 +43,9 @@ class StudentsImport implements ToModel
                     'gpa' => isset($row[6]) ? floatval($row[6]) : 0,
                     'group_id' => UserGroup::Student,
                 ]);
+            } else {
+                session()->flash('message', "Student with #{$row[0]} or email {$email} already exists.");
+                session()->flash('alert-class', 'alert-danger');
             }
         }
 
