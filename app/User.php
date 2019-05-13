@@ -480,7 +480,7 @@ class User extends Authenticatable
     {
         $reservation = $this->getReservationById($reservationId);
 
-        $this->isTooEarlyToChangeReservationStatus($reservation->timeslot);
+        // $this->isTooEarlyToChangeReservationStatus($reservation->timeslot);
 
         $reservation->attend($this->id);
         $reservation->status;
@@ -492,7 +492,7 @@ class User extends Authenticatable
     {
         $reservation = $this->getReservationById($reservationId);
 
-        $this->isTooEarlyToChangeReservationStatus($reservation->timeslot);
+        // $this->isTooEarlyToChangeReservationStatus($reservation->timeslot);
 
         $reservation->miss($this->id);
         $reservation->status;
