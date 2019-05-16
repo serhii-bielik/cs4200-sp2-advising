@@ -3,11 +3,13 @@
 namespace App;
 
 use App\Notifications\AdvisingPeriodCreated;
+use App\Notifications\AdvisingTimeslotsCreated;
 use App\Structures\ReservationStatuses;
 use DateTime;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use mysql_xdevapi\Exception;
 
@@ -754,5 +756,31 @@ class User extends Authenticatable
 
         return ['is_notified' => 0,
             'message' => 'The current advising period is not yet notified to advisers.'];
+    }
+
+    public function adviserNotifyTimeslots()
+    {
+        $cacheKey = "adv{$this->id}notifyTimeslots";
+        if (Cache::has($cacheKey)) {
+            throw new \Exception('You can use notification only once per 24 hours.');
+        }
+
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        if (!$lastPeriod) {
+            throw new \Exception('There is no period to notify');
+        }
+
+        $students = $this->students;
+
+        foreach ($students as $student) {
+            if (!$student->reservation) {
+                $student->notify(new AdvisingTimeslotsCreated($lastPeriod, $student->name));
+            }
+        }
+
+        Cache::put($cacheKey, true, 60 * 60 * 24);
+
+        return ['status' => 'success',
+            'message' => 'The system has started to send notifications for students.'];
     }
 }
