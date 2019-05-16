@@ -162,4 +162,26 @@ class DirectorController extends Controller
             return response()->json(['error' => $message->getMessage()], 400);
         }
     }
+
+    public function notifyPeriod()
+    {
+        $this->isDirector();
+
+        try {
+            return auth()->user()->directorNotifyPeriod();
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
+    public function notifyPeriodStatus()
+    {
+        $this->isDirector();
+
+        try {
+            return auth()->user()->directorNotifyPeriodStatus();
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
 }

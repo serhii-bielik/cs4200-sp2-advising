@@ -33,8 +33,9 @@
         <button v-on:click="rmPrivateNote">Rm Private Note</button>
 
         <p>@{{ period }}</p>
-        <button v-on:click="addPeriod">Add Period (Director API)</button>
-        <button v-on:click="rmPeriod">Rm Period (Director API)</button>
+        <button v-on:click="addPeriod">Add Period</button>
+        <button v-on:click="rmPeriod">Rm Period</button>
+        <button v-on:click="notifyPeriod">Notify Period</button><br>
         <button v-on:click="addTimeslot">Add Timeslot</button>
         <button v-on:click="updateTimeslot">Update Timeslot</button>
         <button v-on:click="rmTimeslot">Rm Timeslot</button><br>
@@ -133,6 +134,11 @@
                     startDate: '2019-04-10',
                     endDate: '2019-04-31'
                 }).then(response => this.period = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            notifyPeriod: function () {
+                axios.post('/api/director/period/notify').then(response => this.period = response.data)
                     .catch(error => console.error(error));
             },
 

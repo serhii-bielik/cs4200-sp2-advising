@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Notifications\AdvisingPeriodCreated;
 use App\Structures\ReservationStatuses;
 use DateTime;
 use Illuminate\Notifications\Notifiable;
@@ -711,5 +712,47 @@ class User extends Authenticatable
         $adviserData['report'] = $adviser->getAdviserStats(true);
 
         return $adviserData;
+    }
+
+    public function directorNotifyPeriod()
+    {
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        if (!$lastPeriod) {
+            throw new \Exception('There is no period to notify');
+        }
+
+        if ($lastPeriod->is_notified == 1) {
+            throw new \Exception('The last period was already notified to advisers.');
+        }
+
+        $advisers = User::whereIn("group_id", [UserGroup::Adviser, UserGroup::Director])
+            ->where('id', '<>', $this->id)
+            ->get();
+
+        foreach ($advisers as $adviser) {
+            $adviser->notify(new AdvisingPeriodCreated($lastPeriod, $adviser->name));
+        }
+
+        $lastPeriod->is_notified = 1;
+        $lastPeriod->save();
+
+        return ['status' => 'success',
+                'message' => 'The system has started to send notifications for advisers.'];
+    }
+
+    public function directorNotifyPeriodStatus()
+    {
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        if (!$lastPeriod) {
+            throw new \Exception('There is no period to notify');
+        }
+
+        if ($lastPeriod->is_notified == 1) {
+            return ['is_notified' => 1,
+                'message' => 'The current advising period is already notified to advisers.'];
+        }
+
+        return ['is_notified' => 0,
+            'message' => 'The current advising period is not yet notified to advisers.'];
     }
 }
