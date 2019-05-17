@@ -4,6 +4,7 @@ namespace App;
 
 use App\Notifications\AdvisingPeriodCreated;
 use App\Notifications\AdvisingTimeslotsCreated;
+use App\Notifications\StudentMadeReservation;
 use App\Structures\ReservationStatuses;
 use DateTime;
 use Illuminate\Notifications\Notifiable;
@@ -433,7 +434,11 @@ class User extends Authenticatable
             throw new \Exception("Timeslot is reserved already");
         }
 
-        return $timeslot->makeReservation($this->id);
+        $newReservation = $timeslot->makeReservation($this->id);
+
+        $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name));
+
+        return $newReservation;
     }
 
     public function getCurrentReservation($lastPeriodId, $adviserId)
