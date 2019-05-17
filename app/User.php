@@ -2,8 +2,10 @@
 
 namespace App;
 
+use App\Notifications\AdviserCancelledReservation;
 use App\Notifications\AdvisingPeriodCreated;
 use App\Notifications\AdvisingTimeslotsCreated;
+use App\Notifications\StudentCancelledReservation;
 use App\Notifications\StudentMadeReservation;
 use App\Structures\ReservationStatuses;
 use DateTime;
@@ -166,7 +168,7 @@ class User extends Authenticatable
     public function studentAdviser()
     {
         return $this->belongsToMany('App\User', 'adviser_advisee', 'advisee_id', 'adviser_id')
-            ->select('user.id', 'user.au_id', 'user.name', 'user.email', 'user.phone', 'user.office', 'user.interval', 'user.avatar')
+            ->select('user.id', 'user.au_id', 'user.name', 'user.email', 'user.phone', 'user.office', 'user.interval', 'user.avatar', 'user.is_notification')
             ->orderByDesc('adviser_advisee.id')->limit(1);
     }
 
@@ -436,7 +438,9 @@ class User extends Authenticatable
 
         $newReservation = $timeslot->makeReservation($this->id);
 
-        $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name));
+        if ($adviser[0]->is_notification) {
+            $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name));
+        }
 
         return $newReservation;
     }
@@ -470,6 +474,17 @@ class User extends Authenticatable
         $reservation->cancel($this->id);
 
         $reservation->status;
+
+        if ($this->group_id == UserGroup::Student) {
+            $adviser = $this->studentAdviser[0];
+            if ($adviser->is_notification) {
+                $adviser->notify(new StudentCancelledReservation($timeslot, $this->name, $adviser->name));
+            }
+        } else {
+            if ($reservation->student->is_notification) {
+                $reservation->student->notify(new AdviserCancelledReservation($reservation->timeslot, $reservation->student->name));
+            }
+        }
 
         return $reservation;
     }
