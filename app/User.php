@@ -444,7 +444,7 @@ class User extends Authenticatable
             $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name));
         }
 
-        $calendar = new GoogleCalendarManager($this->token);
+        $calendar = new GoogleCalendarManager($this);
 
         $startTime = Carbon::parse("$timeslot->date $timeslot->time");
         $endTime = Carbon::parse("$timeslot->date $timeslot->time")->addMinutes($adviser[0]->interval);
@@ -497,6 +497,12 @@ class User extends Authenticatable
             if ($adviser->is_notification) {
                 $adviser->notify(new StudentCancelledReservation($timeslot, $this->name, $adviser->name));
             }
+
+            if ($reservation->calendar_id) {
+                $calendar = new GoogleCalendarManager($this);
+                $calendar->removeEvent($reservation->calendar_id);
+            }
+
         } else {
             if ($reservation->student->is_notification) {
                 $reservation->student->notify(new AdviserCancelledReservation($reservation->timeslot, $reservation->student->name));
