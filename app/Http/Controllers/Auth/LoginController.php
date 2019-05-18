@@ -53,7 +53,7 @@ class LoginController extends Controller
                 'https://www.googleapis.com/auth/plus.me',
                 'https://www.googleapis.com/auth/plus.login',
             ])
-            ->with(["access_type" => "offline"])
+            ->with(["access_type" => "offline"]) //, "prompt" => "consent select_account"
             ->redirect();
     }
 
@@ -106,10 +106,10 @@ class LoginController extends Controller
                 $existingUser->avatar = $user->avatar;
                 $existingUser->avatar_original = $user->avatar_original;
                 $existingUser->token = $user->token;
-                if ($user->refreshToken != '') {
+                if ($user->refreshToken) {
                     $existingUser->refresh_token = $user->refreshToken;
                 }
-                if ($user->expiresIn != '') {
+                if ($user->expiresIn) {
                     $existingUser->expires_in = $user->expiresIn;
                 }
                 $existingUser->save();
