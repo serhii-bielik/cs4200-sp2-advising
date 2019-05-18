@@ -5,6 +5,8 @@ namespace App;
 use App\Notifications\AdviserCancelledReservation;
 use App\Notifications\AdvisingPeriodCreated;
 use App\Notifications\AdvisingTimeslotsCreated;
+use App\Notifications\GoogleCalendarEvent;
+use App\Notifications\GoogleCalendarManager;
 use App\Notifications\StudentCancelledReservation;
 use App\Notifications\StudentMadeReservation;
 use App\Structures\ReservationStatuses;
@@ -440,6 +442,21 @@ class User extends Authenticatable
 
         if ($adviser[0]->is_notification) {
             $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name));
+        }
+
+        $calendar = new GoogleCalendarManager($this->token);
+
+        $startTime = Carbon::parse("$timeslot->date $timeslot->time");
+        $endTime = Carbon::parse("$timeslot->date $timeslot->time")->addMinutes($adviser[0]->interval);
+
+        $event = $calendar->addEvent(new GoogleCalendarEvent(
+            "Advising Session for $this->name", "You are required to meet with your adviser {$adviser[0]->name} twice per semester.",
+            $startTime->toRfc3339String(), $endTime->toRfc3339String(), $adviser[0]->office, $this->email, $adviser[0]->email
+        ));
+
+        if ($event) {
+            $newReservation->calendar_id = $event->getId();
+            $newReservation->save();
         }
 
         return $newReservation;
