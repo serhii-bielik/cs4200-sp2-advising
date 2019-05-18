@@ -33,6 +33,10 @@ class GoogleCalendarManager
 
     private function getNewToken($refreshToken)
     {
+        if (!$refreshToken) {
+            return 'dummy_token';
+        }
+
         $client = new Google_Client;
         $client->setClientId(env('GOOGLE_CLIENT_ID'));
         $client->setClientSecret(env('GOOGLE_CLIENT_SECRET'));

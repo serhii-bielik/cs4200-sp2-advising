@@ -493,6 +493,7 @@ class User extends Authenticatable
         $reservation->status;
 
         if ($this->group_id == UserGroup::Student) {
+
             $adviser = $this->studentAdviser[0];
             if ($adviser->is_notification) {
                 $adviser->notify(new StudentCancelledReservation($timeslot, $this->name, $adviser->name));
@@ -504,9 +505,18 @@ class User extends Authenticatable
             }
 
         } else {
-            if ($reservation->student->is_notification) {
-                $reservation->student->notify(new AdviserCancelledReservation($reservation->timeslot, $reservation->student->name));
+
+            $student = $reservation->studentFull;
+
+            if ($student->is_notification) {
+                $student->notify(new AdviserCancelledReservation($reservation->timeslot, $student->name));
             }
+
+            if ($reservation->calendar_id) {
+                $calendar = new GoogleCalendarManager($student);
+                $calendar->removeEvent($reservation->calendar_id);
+            }
+
         }
 
         return $reservation;
