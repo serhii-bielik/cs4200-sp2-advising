@@ -47,7 +47,13 @@ class LoginController extends Controller
      */
     public function redirectToProvider()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')
+            ->scopes([
+                'https://www.googleapis.com/auth/calendar.events',
+                'https://www.googleapis.com/auth/plus.me',
+                'https://www.googleapis.com/auth/plus.login',
+            ])
+            ->redirect();
     }
 
     public function logout() {
@@ -78,6 +84,7 @@ class LoginController extends Controller
             $newUser->google_id = $user->id;
             $newUser->avatar = $user->avatar;
             $newUser->avatar_original = $user->avatar_original;
+            $newUser->token = $user->token;
             $newUser->group_id = UserGroup::Admin;
             $newUser->save();
 
@@ -97,6 +104,7 @@ class LoginController extends Controller
                 $existingUser->google_id = $user->id;
                 $existingUser->avatar = $user->avatar;
                 $existingUser->avatar_original = $user->avatar_original;
+                $existingUser->token = $user->token;
                 $existingUser->save();
 
                 auth()->login($existingUser, true);
