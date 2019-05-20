@@ -94,7 +94,7 @@ class DirectorController extends Controller
     {
         $this->isDirector();
 
-        return Period::get();
+        return Period::with('director')->get();
     }
 
     public function addPeriod()
