@@ -56,6 +56,7 @@ class GoogleCalendarManager
                 'summary' => $eventData->summary,
                 'description' => $eventData->description,
                 'location' => $eventData->location,
+                'colorId' => 3, // Purple, see all: https://stackoverflow.com/questions/11346277/google-calendar-api-php-set-events-color
                 'start' => [
                     'dateTime' => $eventData->startDateTime,
                     'timeZone' => env('TIMEZONE', 'Asia/Bangkok'),
@@ -65,10 +66,9 @@ class GoogleCalendarManager
                     'timeZone' => env('TIMEZONE', 'Asia/Bangkok'),
                 ],
                 'attendees' => [
-                    ['email' => $eventData->studentEmail],
-                    ['email' => $eventData->adviserEmail],
+                    ['email' => $eventData->studentEmail, 'responseStatus' => "accepted"],
+                    ['email' => $eventData->adviserEmail, 'responseStatus' => "accepted"],
                 ],
-
                 'reminders' => [
                     'useDefault' => false,
                     'overrides' => [
