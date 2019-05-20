@@ -39,7 +39,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'google_id'
+        'password', 'remember_token', 'google_id', 'token', 'refresh_token', 'expires_in',
     ];
 
     /**
@@ -755,12 +755,54 @@ class User extends Authenticatable
     {
         $adviserData = [];
 
-        $adviser = User::where('id', $adviserId)->first();
-        $adviserData['adviser'] = $adviser;
-        
-        $adviserData['report'] = $adviser->getAdviserStats(true);
+        $adviser = User::where('id', $adviserId)->with('faculty', 'group')->first();
+        $adviserData['adviser'] = $adviser->toArray();
+        $adviserData['students'] = $adviser->students;
+        $adviserData['report'] = $adviser->getAdviserStatsForDirector();
 
         return $adviserData;
+    }
+
+    private function getAdviserStatsForDirector()
+    {
+        $stats = [];
+
+        $stats['total_advisee'] = $this->students->count();
+
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        if (!$lastPeriod) {
+            $stats['attended'] = 0;
+            $stats['missed'] = 0;
+
+            $stats['total_reservation'] = 0;
+            $stats['total_cancellation'] = 0;
+        }
+
+        $stats['attended'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('adviser_id', $this->id)
+            ->where('status_id', ReservationStatuses::Advised))
+            ->count();
+
+        $stats['missed'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('adviser_id', $this->id)
+            ->where('status_id', ReservationStatuses::Missed))
+            ->count();
+
+        $stats['total_reservation'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('adviser_id', $this->id)
+            ->where('status_id', ReservationStatuses::Booked))
+            ->count();
+
+        $stats['total_cancellation'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $lastPeriod->id)
+            ->where('adviser_id', $this->id)
+            ->where('status_id', ReservationStatuses::Canceled))
+            ->count();
+
+        return $stats;
     }
 
     public function directorNotifyPeriod()
