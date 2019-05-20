@@ -103,12 +103,6 @@ class User extends Authenticatable
             ->with('faculty', 'reservation');
     }
 
-    public function studentsCount()
-    {
-        return $this->belongsToMany('App\User', 'adviser_advisee', 'adviser_id', 'advisee_id')
-            ->count();
-    }
-
     public function lastPublicNoteForStudent()
     {
         return $this->hasMany('App\PublicNote', 'advisee_id')->orderByDesc('id')->limit(1);

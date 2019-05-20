@@ -46,7 +46,9 @@ class DirectorController extends Controller
         $this->isDirector();
 
         return User::where('group_id', UserGroup::Adviser)
-            ->orWhere('group_id', UserGroup::Director)->get();
+            ->orWhere('group_id', UserGroup::Director)
+            ->withCount('students')
+            ->get();
     }
 
     public function assign()
