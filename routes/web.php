@@ -26,6 +26,7 @@ Route::get('/director/advisers', 'DirectorController@advisers');
 Route::get('/director/students', 'DirectorController@students');
 Route::get('/director/unassignedStudents', 'DirectorController@unassignedStudents');
 Route::post('/director/assign', 'DirectorController@assign');
+//TODO: Remove all reservations
 Route::post('/director/dismiss', 'DirectorController@dismiss');
 Route::get('/director/periods', 'DirectorController@periods');
 Route::post('/director/periods', 'DirectorController@addPeriod');
@@ -58,7 +59,7 @@ Route::post('/adviser/notes/private/remove', 'AdviserController@removePrivateNot
 Route::post('/adviser/notes/private', 'AdviserController@addPrivateNote');
 
 Route::get('/adviser/timeslots', 'AdviserController@timeslots');
-Route::get('/adviser/timeslots/notify', 'AdviserController@notifyTimeslots');
+Route::post('/adviser/timeslots/notify', 'AdviserController@notifyTimeslots');
 Route::get('/adviser/timeslots/{date}', 'AdviserController@timeslotsByDate');
 Route::post('/adviser/timeslots/{date}', 'AdviserController@addTimeslotForDate');
 Route::post('/adviser/timeslots/{date}/update', 'AdviserController@updateTimeslotsForDate');
