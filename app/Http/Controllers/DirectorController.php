@@ -33,6 +33,7 @@ class DirectorController extends Controller
     private function getUnassignedStudents()
     {
         return User::where('group_id', UserGroup::Student)
+            ->with('faculty')
             ->doesntHave('studentAdviser')
             ->get();
     }
