@@ -55,6 +55,7 @@ class UserController extends Controller
         $settings['phone'] = $user->phone;
         $settings['office'] = $user->office;
         $settings['is_notification'] = $user->is_notification;
+        $settings['is_allow_flexible_timeslots'] = $user->is_allow_flexible_timeslots;
         $settings['interval'] = $user->interval;
 
         return $settings;
@@ -75,6 +76,11 @@ class UserController extends Controller
             $office = request('office');
             if (isset($office)) {
                 $user->office = $office;
+            }
+
+            $isAllowFlexibleTimeslots = request('is_allow_flexible_timeslots');
+            if (isset($isAllowFlexibleTimeslots)) {
+                $user->is_allow_flexible_timeslots = $isAllowFlexibleTimeslots;
             }
         }
 
