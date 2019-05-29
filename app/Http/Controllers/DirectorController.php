@@ -25,13 +25,24 @@ class DirectorController extends Controller
     {
         $this->isDirector();
 
-        return User::where('group_id', UserGroup::Student)->with('faculty')->get();
+        return User::where('group_id', UserGroup::Student)
+            ->with('faculty')
+            ->get();
     }
 
     private function getUnassignedStudents()
     {
-        return User::where('group_id', UserGroup::Student)->
-        doesntHave('studentAdviser')->get();
+        return User::where('group_id', UserGroup::Student)
+            ->doesntHave('studentAdviser')
+            ->get();
+    }
+
+    public function getAssignedStudents()
+    {
+        return User::where('group_id', UserGroup::Student)
+            ->with('adviser', 'faculty')
+            ->has('adviser')
+            ->get();
     }
 
     public function unassignedStudents()
@@ -39,6 +50,13 @@ class DirectorController extends Controller
         $this->isDirector();
 
         return $this->getUnassignedStudents();
+    }
+
+    public function assignedStudents()
+    {
+        $this->isDirector();
+
+        return $this->getAssignedStudents();
     }
 
     public function advisers()

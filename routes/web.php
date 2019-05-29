@@ -25,6 +25,7 @@ Route::get('/faculties', 'UserController@faculties');
 Route::get('/director/advisers', 'DirectorController@advisers');
 Route::get('/director/students', 'DirectorController@students');
 Route::get('/director/unassignedStudents', 'DirectorController@unassignedStudents');
+Route::get('/director/assignedStudents', 'DirectorController@assignedStudents');
 Route::post('/director/assign', 'DirectorController@assign');
 //TODO: Remove all reservations
 Route::post('/director/dismiss', 'DirectorController@dismiss');
