@@ -19,6 +19,7 @@ Route::get('/', function () {
 
 Route::get('/whoami', 'UserController@getUserInfo');
 Route::get('/faculties', 'UserController@faculties');
+Route::get('/period', 'UserController@period');
 
 // Director Routes
 

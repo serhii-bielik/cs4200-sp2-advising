@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Faculty;
 use App\Period;
 use App\Timeslot;
+use DateTime;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -25,6 +26,19 @@ class UserController extends Controller
         }
 
         return response()->json(['error' => 'You are not logged in.'], 401);
+    }
+
+    public function period()
+    {
+        $lastPeriod = Period::orderBy('start_date', 'desc')
+            ->select('semester', 'year', 'start_date', 'end_date')
+            ->first();
+
+        if (!$lastPeriod) {
+            return response()->json(['error' => 'There is no period created yet.'], 400);
+        }
+
+        return $lastPeriod;
     }
 
     public function faculties()
