@@ -135,10 +135,28 @@ class StudentController extends Controller
 
         $timeslotId = intval(request('timeslot_id'));
 
-        try {
-            return auth()->user()->makeReservation($timeslotId);
-        } catch (\Exception $message) {
-            return response()->json(['error' => $message->getMessage()], 400);
+        if (!$timeslotId) {
+            $date = DateTime::createFromFormat('Y-m-d', request('date'));
+            if (!$date) {
+                return response()->json(['error' => 'Invalid date format. Please use: Y-m-d'], 400);
+            }
+
+            $time = DateTime::createFromFormat('H:i', request('time'));
+            if (!$time) {
+                return response()->json(['error' => 'Invalid time format. Please use: H:i'], 400);
+            }
+
+            try {
+                return auth()->user()->makeFlexibleReservation($date, $time);
+            } catch (\Exception $message) {
+                return response()->json(['error' => $message->getMessage()], 400);
+            }
+        } else {
+            try {
+                return auth()->user()->makeReservation($timeslotId);
+            } catch (\Exception $message) {
+                return response()->json(['error' => $message->getMessage()], 400);
+            }
         }
     }
 

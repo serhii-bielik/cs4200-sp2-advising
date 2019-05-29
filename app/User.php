@@ -164,7 +164,7 @@ class User extends Authenticatable
     public function studentAdviser()
     {
         return $this->belongsToMany('App\User', 'adviser_advisee', 'advisee_id', 'adviser_id')
-            ->select('user.id', 'user.au_id', 'user.name', 'user.email', 'user.phone', 'user.office', 'user.interval', 'user.avatar', 'user.is_notification')
+            ->select('user.id', 'user.au_id', 'user.name', 'user.email', 'user.phone', 'user.office', 'user.interval', 'user.avatar', 'user.is_notification', 'user.is_allow_flexible_timeslots')
             ->orderByDesc('adviser_advisee.id')->limit(1);
     }
 
@@ -398,7 +398,47 @@ class User extends Authenticatable
         return $this->getTimeslotsForDate($date);
     }
 
-    public function makeReservation($timeslotId)
+    public function makeFlexibleReservation($date, $time)
+    {
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
+        if (!$lastPeriod) {
+            throw new \Exception("Advising period is not yet created");
+        }
+
+        $adviser = $this->studentAdviser->first();
+
+        if (!$adviser) {
+            throw new \Exception("You do not have adviser yet");
+        }
+
+        if (!$adviser->is_allow_flexible_timeslots) {
+            throw new \Exception("Your adviser does not allow flexible reservation");
+        }
+
+        $reservation = $this->getCurrentReservation($lastPeriod->id, $adviser->id);
+        if ($reservation) {
+            if ($reservation->status_id == ReservationStatuses::Booked ||
+                $reservation->status_id == ReservationStatuses::Unconfirmed) {
+                throw new \Exception("You already have active reservation in this advising period.");
+            } else if ($reservation->status_id == ReservationStatuses::Advised) {
+                throw new \Exception("You already advised in this advising period.");
+            }
+        }
+
+        $timeslot = Timeslot::where('adviser_id', $adviser->id)
+            ->where('period_id', $lastPeriod->id)
+            ->where('date', $date->format('Y-m-d'))
+            ->where('time', $time->format('H:i:s'))
+            ->first();
+
+        if(!$timeslot) {
+            $timeslot = $adviser->addTimeslotForDate($date, $time);
+        }
+
+        return $this->makeReservation($timeslot->id);
+    }
+
+    public function makeReservation($timeslotId, $isUnconfirmed = false)
     {
         $lastPeriod = Period::orderBy('start_date', 'desc')->first();
         if (!$lastPeriod) {
@@ -432,10 +472,15 @@ class User extends Authenticatable
             throw new \Exception("Timeslot is reserved already");
         }
 
-        $newReservation = $timeslot->makeReservation($this->id);
+        $newReservation = $timeslot->makeReservation($this->id, $isUnconfirmed);
 
         if ($adviser[0]->is_notification) {
-            $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name));
+            if ($isUnconfirmed) {
+                //TODO: Notification for adviser
+                $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name));
+            } else {
+                $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name));
+            }
         }
 
         $calendar = new GoogleCalendarManager($this);
@@ -462,7 +507,8 @@ class User extends Authenticatable
             ->whereIn('timeslot_id', Timeslot::select('id')
                                     ->where('period_id', $lastPeriodId)
                                     ->where('adviser_id', $adviserId)
-                                    ->whereIn('status_id', [ReservationStatuses::Advised, ReservationStatuses::Booked]))
+                                    ->whereIn('status_id',
+                                        [ReservationStatuses::Advised, ReservationStatuses::Booked, ReservationStatuses::Unconfirmed]))
             ->first();
     }
 

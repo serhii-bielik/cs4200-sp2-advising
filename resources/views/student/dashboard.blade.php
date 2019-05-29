@@ -30,6 +30,7 @@
 
         <p>@{{ timeslot }}</p>
         <button v-on:click="makeReservation">Reservation</button>
+        <button v-on:click="makeReservationFlex">Reservation Flex</button>
         <button v-on:click="cancelReservation">Cancel Reservation</button>
     </div>
 
@@ -84,6 +85,14 @@
             makeReservation: function () {
                 axios.post('/api/student/reservation/make',{
                     timeslot_id: 27,
+                }).then(response => this.timeslot = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            makeReservationFlex: function () {
+                axios.post('/api/student/reservation/make',{
+                    date: '2019-05-23',
+                    time: '9:00'
                 }).then(response => this.timeslot = response.data)
                     .catch(error => console.error(error));
             },

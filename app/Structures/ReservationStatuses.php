@@ -8,4 +8,5 @@ abstract class ReservationStatuses
     const Canceled = 2;
     const Advised = 3;
     const Missed = 4;
+    const Unconfirmed = 5;
 }
