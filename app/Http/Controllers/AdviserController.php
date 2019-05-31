@@ -251,6 +251,17 @@ class AdviserController extends Controller
         }
     }
 
+    public function getUnconfirmedReservations()
+    {
+        $this->isAdviser();
+
+        try {
+            return auth()->user()->getAdviserUnconfirmedReservations();
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
     public function cancelReservation()
     {
         $this->isAdviser();

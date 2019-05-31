@@ -68,6 +68,7 @@ Route::post('/adviser/timeslots/{date}/update', 'AdviserController@updateTimeslo
 Route::post('/adviser/timeslot/remove', 'AdviserController@removeTimeslot');
 
 Route::get('/adviser/reservations', 'AdviserController@getReservations');
+Route::get('/adviser/unconfirmedReservations', 'AdviserController@getUnconfirmedReservations');
 //TODO: Confirm reservation
 //TODO: List reservations to confirm
 Route::post('/adviser/reservation/cancel', 'AdviserController@cancelReservation');
