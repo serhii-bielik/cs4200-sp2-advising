@@ -91,7 +91,7 @@
 
             makeReservationFlex: function () {
                 axios.post('/api/student/reservation/make',{
-                    date: '2019-05-23',
+                    date: '2019-05-29',
                     time: '9:00'
                 }).then(response => this.timeslot = response.data)
                     .catch(error => console.error(error));
@@ -99,7 +99,7 @@
 
             cancelReservation: function () {
                 axios.post('/api/student/reservation/cancel',{
-                    reservation_id: 8,
+                    reservation_id: 22,
                 }).then(response => this.timeslot = response.data)
                     .catch(error => console.error(error));
             },

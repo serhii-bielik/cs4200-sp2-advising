@@ -12,16 +12,18 @@ class AdviserCancelledReservation extends Notification implements ShouldQueue
     use Queueable;
 
     private $studentName;
-    private $timeslot;
+    private $timeslotDate;
+    private $timeslotTime;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($timeslot, $studentName)
+    public function __construct($timeslotDate, $timeslotTime, $studentName)
     {
-        $this->timeslot = $timeslot;
+        $this->timeslotDate = $timeslotDate;
+        $this->timeslotTime = $timeslotTime;
         $this->studentName = $studentName;
     }
 
@@ -47,7 +49,7 @@ class AdviserCancelledReservation extends Notification implements ShouldQueue
         return (new MailMessage)
                     ->line("Dear $this->studentName.")
                     ->line("Your adviser has canceled reservation for advising on " .
-                        $this->timeslot->date . " at " . $this->timeslot->time)
+                        $this->timeslotDate . " at " . $this->timeslotTime)
                     ->line('You can make new reservation at the panel.')
                     ->action('Open Advising Scheduling Panel', url(env('APP_URL', '/')))
                     ->line('Thank you!');
@@ -63,7 +65,7 @@ class AdviserCancelledReservation extends Notification implements ShouldQueue
     {
         return [
             'message' => "Your adviser has canceled reservation for advising on " .
-                $this->timeslot->date . " at " . $this->timeslot->time
+                $this->timeslotDate . " at " . $this->timeslotTime
         ];
     }
 }

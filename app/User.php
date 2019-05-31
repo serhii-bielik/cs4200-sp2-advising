@@ -515,18 +515,21 @@ class User extends Authenticatable
     public function cancelReservation($reservationId)
     {
         $reservation = $this->getReservationById($reservationId);
+        $timeslot = $reservation->timeslot;
 
         if ($this->group_id == UserGroup::Student) {
-            $timeslot = $reservation->timeslot;
+            if ($reservation->status_id == ReservationStatuses::Booked) {
+                $timeslotDateTime = DateTime::createFromFormat('Y-m-d H:i:s', "$timeslot->date $timeslot->time");
+                $nowDateTime = new DateTime();
+                $minTime = config('app.restrictReservationCancellationTime');
 
-            $timeslotDateTime = DateTime::createFromFormat('Y-m-d H:i:s', "$timeslot->date $timeslot->time");
-            $nowDateTime = new DateTime();
-            $minTime = config('app.restrictReservationCancellationTime');
-
-            if ($timeslotDateTime->getTimestamp() - $nowDateTime->getTimestamp() < $minTime) {
-                throw new \Exception("Too late to cancel this reservation.");
+                if ($timeslotDateTime->getTimestamp() - $nowDateTime->getTimestamp() < $minTime) {
+                    throw new \Exception("Too late to cancel this reservation.");
+                }
             }
         }
+
+        $isRemoveTimeslot = $reservation->status_id == ReservationStatuses::Unconfirmed ? true : false;
 
         $reservation->cancel($this->id);
 
@@ -536,7 +539,7 @@ class User extends Authenticatable
 
             $adviser = $this->studentAdviser[0];
             if ($adviser->is_notification) {
-                $adviser->notify(new StudentCancelledReservation($timeslot, $this->name, $adviser->name));
+                $adviser->notify(new StudentCancelledReservation($timeslot->date, $timeslot->time, $this->name, $adviser->name));
             }
 
             if ($reservation->calendar_id) {
@@ -549,7 +552,7 @@ class User extends Authenticatable
             $student = $reservation->studentFull;
 
             if ($student->is_notification) {
-                $student->notify(new AdviserCancelledReservation($reservation->timeslot, $student->name));
+                $student->notify(new AdviserCancelledReservation($timeslot->date, $timeslot->time, $student->name));
             }
 
             if ($reservation->calendar_id) {
@@ -559,7 +562,13 @@ class User extends Authenticatable
 
         }
 
-        return $reservation;
+        if ($isRemoveTimeslot) {
+            $timeslot->delete();
+            return ['status' => 'success',
+                'message' => 'The proposed appointment was canceled'];
+        } else {
+            return $reservation;
+        }
     }
 
     private function isTooEarlyToChangeReservationStatus($timeslot)
@@ -675,11 +684,12 @@ class User extends Authenticatable
             throw new \Exception("Reservation was not found in the system or it is not related to your account.");
         }
 
-        if ($reservation->status_id != ReservationStatuses::Booked) {
-            throw new \Exception("Reservation has wrong status (should be 'Booked')");
+        if ($reservation->status_id == ReservationStatuses::Booked ||
+            $reservation->status_id == ReservationStatuses::Unconfirmed) {
+            return $reservation;
         }
 
-        return $reservation;
+        throw new \Exception("Reservation has wrong status (should be 'Booked')");
     }
 
     public function getAdviserStats($withoutMessages = false)

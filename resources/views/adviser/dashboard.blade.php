@@ -182,14 +182,14 @@
 
             cancelReservation: function () {
                 axios.post('/api/adviser/reservation/cancel',{
-                    reservation_id: 9,
+                    reservation_id: 22,
                 }).then(response => this.period = response.data)
                     .catch(error => console.error(error));
             },
 
             attendReservation: function () {
                 axios.post('/api/adviser/reservation/attend',{
-                    reservation_id: 9,
+                    reservation_id: 22,
                 }).then(response => this.period = response.data)
                     .catch(error => console.error(error));
             },
