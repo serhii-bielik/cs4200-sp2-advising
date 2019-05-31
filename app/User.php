@@ -634,8 +634,8 @@ class User extends Authenticatable
         return Reservation::whereIn('timeslot_id', Timeslot::select('id')
                 ->where('period_id', $lastPeriod->id)
                 ->where('adviser_id', $this->id)
-                ->where('status_id', ReservationStatuses::Booked))
-            ->with('timeslot', 'student')
+                ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Unconfirmed]))
+            ->with('timeslot', 'student', 'status')
             ->get();
     }
 
