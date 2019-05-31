@@ -40,10 +40,16 @@ class DirectorController extends Controller
 
     public function getAssignedStudents()
     {
-        return User::where('group_id', UserGroup::Student)
+        $students = User::where('group_id', UserGroup::Student)
             ->with('adviser', 'faculty')
             ->has('adviser')
-            ->get();
+            ->get()
+            ->toArray();
+        for ($i = 0; $i < count($students); $i++) {
+            $students[$i]['adviser'] = $students[$i]['adviser'][0];
+        }
+
+        return $students;
     }
 
     public function unassignedStudents()
