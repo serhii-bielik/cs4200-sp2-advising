@@ -815,8 +815,18 @@ class User extends Authenticatable
                     ->where('period_id', $lastPeriod->id)
                     ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised])))
             ->with('faculty', 'adviser')
-            ->get();
-        $stats['total_unreserved'] = $total_unreserved->count();
+            ->get()
+            ->toArray();
+
+        for ($i = 0; $i < count($total_unreserved); $i++) {
+            if (isset($total_unreserved[$i]['adviser'][0])) {
+                $total_unreserved[$i]['adviser'] = $total_unreserved[$i]['adviser'][0];
+            } else {
+                $total_unreserved[$i]['adviser'] = null;
+            }
+        }
+
+        $stats['total_unreserved'] = count($total_unreserved);
         $stats['unreserved_user'] = $total_unreserved;
 
         return $stats;
