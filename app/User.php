@@ -94,7 +94,7 @@ class User extends Authenticatable
         // TODO: Period control, exclude data from previous period.
 
         return $this->hasOne('App\Reservation', 'advisee_id', 'id')
-            ->with('status')
+            ->with('status', 'timeslot')
             ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised, ReservationStatuses::Missed, ReservationStatuses::Unconfirmed])
             ->orderByDesc('created_at');
     }

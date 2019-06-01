@@ -28,6 +28,7 @@ Route::get('/period', 'UserController@period');
 
 Route::get('/director/advisers', 'DirectorController@advisers');
 Route::get('/director/students', 'DirectorController@students');
+Route::get('/director/student/{studentId}', 'DirectorController@student');
 Route::get('/director/unassignedStudents', 'DirectorController@unassignedStudents');
 Route::get('/director/assignedStudents', 'DirectorController@assignedStudents');
 Route::post('/director/assign', 'DirectorController@assign');

@@ -30,6 +30,38 @@ class DirectorController extends Controller
             ->get();
     }
 
+    public function student()
+    {
+        $this->isDirector();
+
+        $studentId = intval(request('studentId'));
+
+        $student = User::where('group_id', UserGroup::Student)
+            ->where('id', $studentId)
+            ->with('faculty', 'reservation', 'adviser', 'lastPublicNoteForStudent')
+            ->first();
+
+        if (!$student) {
+            return response()->json(['error' => 'Student does not exist.'], 400);
+        }
+        
+        $student = $student->toArray();
+
+        if (isset($student['last_public_note_for_student'][0])) {
+            $student['last_public_note_for_student'] = $student['last_public_note_for_student'][0];
+        } else {
+            $student['last_public_note_for_student'] = null;
+        }
+
+        if (isset($student['adviser'][0])) {
+            $student['adviser'] = $student['adviser'][0];
+        } else {
+            $student['adviser'] = null;
+        }
+
+        return $student;
+    }
+
     private function getUnassignedStudents()
     {
         return User::where('group_id', UserGroup::Student)
@@ -85,7 +117,7 @@ class DirectorController extends Controller
             ->whereIn('group_id', [UserGroup::Adviser, UserGroup::Director])
             ->first();
         if(!isset($adviser)) {
-            return response()->json(['error' => 'Adviser does not exists.'], 400);
+            return response()->json(['error' => 'Adviser does not exist.'], 400);
         }
 
         $studentIds = request('studentIds');
@@ -160,7 +192,7 @@ class DirectorController extends Controller
         $periodId = request('id');
 
         if (!$director->removePeriod($periodId)) {
-            return response()->json(['error' => 'Period does not exists.'], 400);
+            return response()->json(['error' => 'Period does not exist.'], 400);
         }
 
         return Period::get();
