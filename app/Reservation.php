@@ -20,7 +20,7 @@ class Reservation extends Model
 
     public function student()
     {
-        return $this->belongsTo('App\User', 'advisee_id')->select('id', 'name', 'email', 'phone');
+        return $this->belongsTo('App\User', 'advisee_id')->select('id', 'name', 'email', 'phone', 'is_notification');
     }
 
     public function studentFull()
@@ -51,6 +51,12 @@ class Reservation extends Model
     {
         $this->status_id = ReservationStatuses::Missed;
         $this->closed_by = $userId;
+        $this->save();
+    }
+
+    public function confirm()
+    {
+        $this->status_id = ReservationStatuses::Booked;
         $this->save();
     }
 }

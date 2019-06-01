@@ -42,6 +42,7 @@
         <button v-on:click="cancelReservation">Cancel Reservation</button>
         <button v-on:click="attendReservation">Attend Reservation</button>
         <button v-on:click="missReservation">Miss Reservation</button>
+        <button v-on:click="confirmReservation">Confirm Reservation</button>
 
         <p>@{{ settings }}</p>
         <button v-on:click="setSettings">Update Settings</button>
@@ -182,21 +183,28 @@
 
             cancelReservation: function () {
                 axios.post('/api/adviser/reservation/cancel',{
-                    reservation_id: 22,
+                    reservation_id: 25,
                 }).then(response => this.period = response.data)
                     .catch(error => console.error(error));
             },
 
             attendReservation: function () {
                 axios.post('/api/adviser/reservation/attend',{
-                    reservation_id: 22,
+                    reservation_id: 25,
                 }).then(response => this.period = response.data)
                     .catch(error => console.error(error));
             },
 
             missReservation: function () {
                 axios.post('/api/adviser/reservation/miss',{
-                    reservation_id: 9,
+                    reservation_id: 25,
+                }).then(response => this.period = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            confirmReservation: function () {
+                axios.post('/api/adviser/reservation/confirm',{
+                    reservation_id: 25,
                 }).then(response => this.period = response.data)
                     .catch(error => console.error(error));
             },

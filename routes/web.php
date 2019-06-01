@@ -74,6 +74,7 @@ Route::get('/adviser/unconfirmedReservations', 'AdviserController@getUnconfirmed
 Route::post('/adviser/reservation/cancel', 'AdviserController@cancelReservation');
 Route::post('/adviser/reservation/attend', 'AdviserController@attendReservation');
 Route::post('/adviser/reservation/miss', 'AdviserController@missReservation');
+Route::post('/adviser/reservation/confirm', 'AdviserController@confirmReservation');
 
 Route::get('/adviser/dashboard', 'AdviserController@getStats');
 

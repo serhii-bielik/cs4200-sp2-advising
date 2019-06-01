@@ -301,6 +301,19 @@ class AdviserController extends Controller
         }
     }
 
+    public function confirmReservation()
+    {
+        $this->isAdviser();
+
+        $reservationId = intval(request('reservation_id'));
+
+        try {
+            return auth()->user()->confirmReservation($reservationId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
     public function getStats()
     {
         $this->isAdviser();

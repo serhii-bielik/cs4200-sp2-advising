@@ -3,12 +3,14 @@
 namespace App;
 
 use App\Notifications\AdviserCancelledReservation;
+use App\Notifications\AdviserConfirmedReservation;
 use App\Notifications\AdvisingPeriodCreated;
 use App\Notifications\AdvisingTimeslotsCreated;
 use App\Notifications\GoogleCalendarEvent;
 use App\Notifications\GoogleCalendarManager;
 use App\Notifications\StudentCancelledReservation;
 use App\Notifications\StudentMadeReservation;
+use App\Notifications\StudentMissedReservation;
 use App\Structures\ReservationStatuses;
 use DateTime;
 use Illuminate\Notifications\Notifiable;
@@ -93,7 +95,7 @@ class User extends Authenticatable
 
         return $this->hasOne('App\Reservation', 'advisee_id', 'id')
             ->with('status')
-            ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised, ReservationStatuses::Missed])
+            ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised, ReservationStatuses::Missed, ReservationStatuses::Unconfirmed])
             ->orderByDesc('created_at');
     }
 
@@ -587,6 +589,10 @@ class User extends Authenticatable
 
         // $this->isTooEarlyToChangeReservationStatus($reservation->timeslot);
 
+        if ($reservation->status_id != ReservationStatuses::Booked) {
+            throw new \Exception("Reservation was not confirmed and cannot be attended.");
+        }
+
         $reservation->attend($this->id);
         $reservation->status;
 
@@ -599,8 +605,40 @@ class User extends Authenticatable
 
         // $this->isTooEarlyToChangeReservationStatus($reservation->timeslot);
 
+        if ($reservation->status_id != ReservationStatuses::Booked) {
+            throw new \Exception("Reservation was not confirmed and cannot be missed.");
+        }
+
+        $student = $reservation->student;
+        if ($student->is_notification) {
+            $student->notify(new StudentMissedReservation($reservation->timeslot->date, $reservation->timeslot->time,
+                $student->name));
+        }
+
         $reservation->miss($this->id);
         $reservation->status;
+
+        return $reservation;
+    }
+
+    public function confirmReservation($reservationId)
+    {
+        $reservation = $this->getReservationById($reservationId);
+
+        // $this->isTooEarlyToChangeReservationStatus($reservation->timeslot);
+
+        if ($reservation->status_id != ReservationStatuses::Unconfirmed) {
+            throw new \Exception("Reservation has different status and cannot be confirmed.");
+        }
+
+        $reservation->confirm();
+        $reservation->status;
+
+        $student = $reservation->student;
+        if ($student->is_notification) {
+            $student->notify(new AdviserConfirmedReservation($reservation->timeslot->date, $reservation->timeslot->time,
+                $student->name));
+        }
 
         return $reservation;
     }
@@ -689,7 +727,7 @@ class User extends Authenticatable
             return $reservation;
         }
 
-        throw new \Exception("Reservation has wrong status (should be 'Booked')");
+        throw new \Exception("Reservation has wrong status (should be 'Booked' or 'Unconfirmed')");
     }
 
     public function getAdviserStats($withoutMessages = false)
@@ -813,7 +851,7 @@ class User extends Authenticatable
             ->whereNotIn('id', Reservation::select('advisee_id')
                 ->whereIn('timeslot_id', Timeslot::select('id')
                     ->where('period_id', $lastPeriod->id)
-                    ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised])))
+                    ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised, ReservationStatuses::Unconfirmed])))
             ->with('faculty', 'adviser')
             ->get()
             ->toArray();
