@@ -15,6 +15,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+//TODO: Remove debug urls
+Route::get('/debug/reservation/{reservationId}/status/{statusId}', 'UserController@debugReservationStatus');
+
 // User (Common) Routes
 
 Route::get('/whoami', 'UserController@getUserInfo');

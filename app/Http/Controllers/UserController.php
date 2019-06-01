@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Faculty;
 use App\Period;
+use App\Reservation;
 use App\Timeslot;
 use DateTime;
 use Illuminate\Http\Request;
@@ -13,6 +14,22 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth')->except('getUserInfo');
+    }
+
+    public function debugReservationStatus()
+    {
+        $resId = intval(request('reservationId'));
+        $statId = intval(request('statusId'));
+
+        $r = Reservation::where('id', $resId)->first();
+        if (!$r) {
+            return response()->json(['error' => 'reservation not found'], 401);
+        }
+
+        $r->status_id = $statId;
+        $r->save();
+
+        return $r;
     }
 
     public function getUserInfo()
