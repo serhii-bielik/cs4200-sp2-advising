@@ -303,6 +303,10 @@ class User extends Authenticatable
 
     public function addTimeslotForDate($date, $time)
     {
+        if ($date < new DateTime()) {
+            throw new \Exception("You cannot add timeslots to the past");
+        }
+
         $lastPeriod = Period::orderBy('start_date', 'desc')->first();
 
         $minDate = $lastPeriod->start_date;
