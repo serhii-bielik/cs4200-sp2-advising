@@ -38,20 +38,14 @@ class DirectorController extends Controller
 
         $student = User::where('group_id', UserGroup::Student)
             ->where('id', $studentId)
-            ->with('faculty', 'reservation', 'adviser', 'lastPublicNoteForStudent')
+            ->with('faculty', 'reservation', 'adviser', 'publicNotes')
             ->first();
 
         if (!$student) {
             return response()->json(['error' => 'Student does not exist.'], 400);
         }
-        
-        $student = $student->toArray();
 
-        if (isset($student['last_public_note_for_student'][0])) {
-            $student['last_public_note_for_student'] = $student['last_public_note_for_student'][0];
-        } else {
-            $student['last_public_note_for_student'] = null;
-        }
+        $student = $student->toArray();
 
         if (isset($student['adviser'][0])) {
             $student['adviser'] = $student['adviser'][0];
