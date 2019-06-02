@@ -371,6 +371,10 @@ class User extends Authenticatable
             throw new \Exception("Timeslot was not found in the system");
         }
 
+        if (Carbon::createFromFormat('Y-m-d', $timeslot->date) < new DateTime()) {
+            throw new \Exception("You cannot modify timeslots in the past");
+        }
+        
         $timeslot->delete();
 
         return ['status' => 'success'];
@@ -378,6 +382,10 @@ class User extends Authenticatable
 
     public function updateTimeslotsForDate($dateRaw, $timeslotsRaw)
     {
+        if ($dateRaw < new DateTime()) {
+            throw new \Exception("You cannot modify timeslots in the past");
+        }
+
         $date = $dateRaw->format('Y-m-d');
         $timeslots = [];
 
