@@ -12,6 +12,7 @@ use App\Notifications\StudentCancelledReservation;
 use App\Notifications\StudentMadeReservation;
 use App\Notifications\StudentMissedReservation;
 use App\Structures\ReservationStatuses;
+use DateInterval;
 use DateTime;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -374,7 +375,7 @@ class User extends Authenticatable
         if (Carbon::createFromFormat('Y-m-d', $timeslot->date) < new DateTime()) {
             throw new \Exception("You cannot modify timeslots in the past");
         }
-        
+
         $timeslot->delete();
 
         return ['status' => 'success'];
@@ -414,6 +415,10 @@ class User extends Authenticatable
 
     public function makeFlexibleReservation($date, $time)
     {
+        if ($date < (new DateTime())->add(new DateInterval('P1D'))) {
+            throw new \Exception("You can make reservation at least 1 day before selected appointment");
+        }
+        
         $lastPeriod = Period::orderBy('start_date', 'desc')->first();
         if (!$lastPeriod) {
             throw new \Exception("Advising period is not yet created");
@@ -480,6 +485,10 @@ class User extends Authenticatable
 
         if (!$timeslot) {
             throw new \Exception("Timeslot was not found in the system");
+        }
+
+        if (Carbon::createFromFormat('Y-m-d', $timeslot->date) < (new DateTime())->add(new DateInterval('P1D'))) {
+            throw new \Exception("You can make reservation at least 1 day before selected appointment");
         }
 
         if ($timeslot->isReserved) {
