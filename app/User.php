@@ -437,7 +437,7 @@ class User extends Authenticatable
             $timeslot = $adviser->addTimeslotForDate($date, $time);
         }
 
-        return $this->makeReservation($timeslot->id);
+        return $this->makeReservation($timeslot->id, true);
     }
 
     public function makeReservation($timeslotId, $isUnconfirmed = false)
