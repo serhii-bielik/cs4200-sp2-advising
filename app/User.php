@@ -418,7 +418,7 @@ class User extends Authenticatable
         if ($date < (new DateTime())->add(new DateInterval('P1D'))) {
             throw new \Exception("You can make reservation at least 1 day before selected appointment");
         }
-        
+
         $lastPeriod = Period::orderBy('start_date', 'desc')->first();
         if (!$lastPeriod) {
             throw new \Exception("Advising period is not yet created");
@@ -471,7 +471,8 @@ class User extends Authenticatable
 
         $reservation = $this->getCurrentReservation($lastPeriod->id, $adviser[0]->id);
         if ($reservation) {
-            if ($reservation->status_id == ReservationStatuses::Booked) {
+            if ($reservation->status_id == ReservationStatuses::Booked ||
+                $reservation->status_id == ReservationStatuses::Unconfirmed) {
                 throw new \Exception("You already have active reservation in this advising period.");
             } else if ($reservation->status_id == ReservationStatuses::Advised) {
                 throw new \Exception("You already advised in this advising period.");
@@ -773,7 +774,7 @@ class User extends Authenticatable
         $stats['reserved'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
             ->where('period_id', $lastPeriod->id)
             ->where('adviser_id', $this->id)
-            ->where('status_id', ReservationStatuses::Booked))
+            ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Unconfirmed]))
             ->count();
 
         $stats['attended'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
@@ -797,7 +798,7 @@ class User extends Authenticatable
         $stats['new_reservation'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
             ->where('period_id', $lastPeriod->id)
             ->where('adviser_id', $this->id)
-            ->where('status_id', ReservationStatuses::Booked))
+            ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Unconfirmed]))
             ->whereDate('created_at', Carbon::today())
             ->count();
 
@@ -812,7 +813,7 @@ class User extends Authenticatable
             ->where('period_id', $lastPeriod->id)
             ->where('adviser_id', $this->id)
             ->whereDate('date', Carbon::today())
-            ->where('status_id', ReservationStatuses::Booked))
+            ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Unconfirmed]))
             ->with('timeslot', 'student')
             ->get();
 
@@ -850,7 +851,7 @@ class User extends Authenticatable
 
         $stats['total_reserved'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
             ->where('period_id', $lastPeriod->id)
-            ->where('status_id', ReservationStatuses::Booked))
+            ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Unconfirmed]))
             ->count();
 
         $stats['total_attended'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
@@ -933,7 +934,7 @@ class User extends Authenticatable
         $stats['total_reservation'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
             ->where('period_id', $lastPeriod->id)
             ->where('adviser_id', $this->id)
-            ->where('status_id', ReservationStatuses::Booked))
+            ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Unconfirmed]))
             ->count();
 
         $stats['total_cancellation'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
