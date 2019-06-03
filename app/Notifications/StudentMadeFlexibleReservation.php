@@ -7,24 +7,22 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class StudentCancelledReservation extends Notification implements ShouldQueue
+class StudentMadeFlexibleReservation extends Notification implements ShouldQueue
 {
     use Queueable;
 
     private $studentName;
     private $adviserName;
-    private $timeslotDate;
-    private $timeslotTime;
+    private $timeslot;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($timeslotDate, $timeslotTime, $studentName, $adviserName)
+    public function __construct($timeslot, $studentName, $adviserName)
     {
-        $this->timeslotDate = $timeslotDate;
-        $this->timeslotTime = $timeslotTime;
+        $this->timeslot = $timeslot;
         $this->studentName = $studentName;
         $this->adviserName = $adviserName;
     }
@@ -49,12 +47,12 @@ class StudentCancelledReservation extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line("Dear $this->adviserName.")
-                    ->line("Your student $this->studentName has canceled reservation for advising on " .
-                        $this->timeslotDate . " at " . $this->timeslotTime)
-                    ->line('You can check your schedule at the panel.')
-                    ->action('Open Advising Scheduling Panel', url(env('APP_URL', '/')))
-                    ->line('Thank you!');
+            ->line("Dear $this->adviserName.")
+            ->line("Your student $this->studentName has requested reservation for advising on " .
+                $this->timeslot->date . " at " . $this->timeslot->time)
+            ->line('You can confirm or cancel this reservation request and advising status at the panel.')
+            ->action('Open Advising Scheduling Panel', url(env('APP_URL', '/')))
+            ->line('Thank you!');
     }
 
     /**
@@ -66,8 +64,8 @@ class StudentCancelledReservation extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'message' => "$this->studentName has canceled reservation for advising on " .
-                $this->timeslotDate . " at " . $this->timeslotTime,
+            'message' => "$this->studentName has requested reservation for advising on " .
+                $this->timeslot->date . " at " . $this->timeslot->time,
         ];
     }
 }

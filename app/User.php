@@ -9,6 +9,7 @@ use App\Notifications\AdvisingTimeslotsCreated;
 use App\Notifications\GoogleCalendarEvent;
 use App\Notifications\GoogleCalendarManager;
 use App\Notifications\StudentCancelledReservation;
+use App\Notifications\StudentMadeFlexibleReservation;
 use App\Notifications\StudentMadeReservation;
 use App\Notifications\StudentMissedReservation;
 use App\Structures\ReservationStatuses;
@@ -512,8 +513,7 @@ class User extends Authenticatable
 
         if ($adviser[0]->is_notification) {
             if ($isUnconfirmed) {
-                //TODO: Notification for adviser
-                $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name));
+                $adviser[0]->notify(new StudentMadeFlexibleReservation($timeslot, $this->name, $adviser[0]->name));
             } else {
                 $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name));
             }

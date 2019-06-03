@@ -64,7 +64,7 @@ class StudentMadeReservation extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'message' => "Your student $this->studentName has made reservation for advising on " .
+            'message' => "$this->studentName has made reservation for advising on " .
                 $this->timeslot->date . " at " . $this->timeslot->time,
         ];
     }
