@@ -45,6 +45,37 @@ class UserController extends Controller
         return response()->json(['error' => 'You are not logged in.'], 401);
     }
 
+    public function getNotifications()
+    {
+        return auth()->user()->unreadNotifications;
+    }
+
+    public function readNotification()
+    {
+        $notificationId = \request('notification_id');
+
+        if($notificationId) {
+            $notification = auth()->user()->unreadNotifications->where('id', $notificationId);
+
+            if ($notification) {
+                $notification->markAsRead();
+
+                return ['status' => 'success',
+                    'message' => 'Notification read'];
+            }
+        }
+
+        return response()->json(['error' => 'Wrong notification ID.'], 400);
+    }
+
+    public function readAllNotifications()
+    {
+        auth()->user()->unreadNotifications->markAsRead();
+
+        return ['status' => 'success',
+            'message' => 'Notifications read'];
+    }
+
     public function period()
     {
         $lastPeriod = Period::orderBy('start_date', 'desc')

@@ -24,6 +24,10 @@ Route::get('/whoami', 'UserController@getUserInfo');
 Route::get('/faculties', 'UserController@faculties');
 Route::get('/period', 'UserController@period');
 
+Route::get('/notifications', 'UserController@getNotifications');
+Route::post('/notifications/read', 'UserController@readNotification');
+Route::post('/notifications/readAll', 'UserController@readAllNotifications');
+
 // Director Routes
 
 Route::get('/director/advisers', 'DirectorController@advisers');
@@ -46,7 +50,7 @@ Route::get('/director/adviser/{adviserId}', 'DirectorController@adviserData');
 
 // Adviser Routes
 
-Route::get('/adviser', 'AdviserController@dashboard');
+Route::get('/adviser', 'AdviserController@dashboard'); // TODO: Off
 Route::get('/adviser/students', 'AdviserController@students');
 Route::get('/adviser/student/{studentId}', 'AdviserController@student');
 
@@ -84,7 +88,7 @@ Route::get('/adviser/dashboard', 'AdviserController@getStats');
 
 // Student Routes
 
-Route::get('/student', 'StudentController@dashboard');
+Route::get('/student', 'StudentController@dashboard');  // TODO: Off
 Route::get('/student/note', 'StudentController@note');
 Route::get('/student/notes', 'StudentController@notes');
 Route::get('/student/adviser', 'StudentController@adviser');

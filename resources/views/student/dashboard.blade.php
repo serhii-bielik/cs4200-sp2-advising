@@ -18,6 +18,7 @@
         <br>Js is here: <strong>/public/js/</strong></p>
 
     <div id="app">
+
         <p>@{{ message }}</p>
         <button v-on:click="onNotification">On Notification</button>
         <button v-on:click="offNotification">Off Notification</button>
@@ -31,7 +32,11 @@
         <p>@{{ timeslot }}</p>
         <button v-on:click="makeReservation">Reservation</button>
         <button v-on:click="makeReservationFlex">Reservation Flex</button>
-        <button v-on:click="cancelReservation">Cancel Reservation</button>
+        <button v-on:click="cancelReservation">Cancel Reservation</button><br>
+
+        <button v-on:click="notificationRead">Read Notification</button>
+        <button v-on:click="notificationReadAll">Read All Notifications</button><br>
+
     </div>
 
     <hr>
@@ -100,6 +105,19 @@
             cancelReservation: function () {
                 axios.post('/api/student/reservation/cancel',{
                     reservation_id: 22,
+                }).then(response => this.timeslot = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            notificationRead: function () {
+                axios.post('/api/notifications/read',{
+                    notification_id: '70c08e6c-4689-404a-b8d8-a02be8a52fe7',
+                }).then(response => this.timeslot = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            notificationReadAll: function () {
+                axios.post('/api/notifications/readAll',{
                 }).then(response => this.timeslot = response.data)
                     .catch(error => console.error(error));
             },
