@@ -513,7 +513,7 @@ class User extends Authenticatable
         $endTime = Carbon::parse("$timeslot->date $timeslot->time")->addMinutes($adviser[0]->interval);
 
         $event = $calendar->addEvent(new GoogleCalendarEvent(
-            "Advising Session for $this->name", "You are required to meet with your adviser {$adviser[0]->name} twice per semester.",
+            "Advising for $this->name", "You are required to meet with your adviser {$adviser[0]->name} twice per semester.",
             $startTime->toRfc3339String(), $endTime->toRfc3339String(), $adviser[0]->office, $this->email, $adviser[0]->email
         ));
 
