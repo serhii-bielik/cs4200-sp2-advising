@@ -16,22 +16,6 @@ class UserController extends Controller
         $this->middleware('auth')->except('getUserInfo');
     }
 
-    public function debugReservationStatus()
-    {
-        $resId = intval(request('reservationId'));
-        $statId = intval(request('statusId'));
-
-        $r = Reservation::where('id', $resId)->first();
-        if (!$r) {
-            return response()->json(['error' => 'reservation not found'], 401);
-        }
-
-        $r->status_id = $statId;
-        $r->save();
-
-        return $r;
-    }
-
     public function getUserInfo()
     {
         $user = auth()->user();
