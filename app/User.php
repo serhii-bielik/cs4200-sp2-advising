@@ -690,7 +690,7 @@ class User extends Authenticatable
             return $reservation;
         }
 
-        throw new \Exception("You don't have active reservation yet.");
+        throw new \Exception("You don't have active reservation yet. Please make it via Appointment");
     }
 
     public function getAdviserReservations()
