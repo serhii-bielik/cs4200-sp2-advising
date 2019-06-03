@@ -266,6 +266,8 @@ class User extends Authenticatable
             $year--;
         }
 
+        DB::table('notifications')->truncate();
+
         Period::create([
             'director_id' => $this->id,
             'semester' => $semester,
