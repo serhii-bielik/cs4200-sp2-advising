@@ -92,12 +92,22 @@ class User extends Authenticatable
 
     public function reservation()
     {
-        // TODO: Period control, exclude data from previous period.
+        $lastPeriod = Period::orderBy('start_date', 'desc')->first();
 
-        return $this->hasOne('App\Reservation', 'advisee_id', 'id')
-            ->with('status', 'timeslot')
-            ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised, ReservationStatuses::Missed, ReservationStatuses::Unconfirmed])
-            ->orderByDesc('created_at');
+        if ($lastPeriod) {
+            return $this->hasOne('App\Reservation', 'advisee_id', 'id')
+                ->with('status', 'timeslot')
+                ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised, ReservationStatuses::Missed, ReservationStatuses::Unconfirmed])
+                ->whereHas('timeslot', function ($query) use ($lastPeriod) {
+                    $query->where('period_id', '=', $lastPeriod->id);
+                })
+                ->orderByDesc('created_at');
+        } else {
+            return $this->hasOne('App\Reservation', 'advisee_id', 'id')
+                ->with('status', 'timeslot')
+                ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised, ReservationStatuses::Missed, ReservationStatuses::Unconfirmed])
+                ->orderByDesc('created_at');
+        }
     }
 
     public function students()
