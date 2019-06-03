@@ -102,6 +102,18 @@ class LoginController extends Controller
 
             if ($existingUser) {
 
+                if (!$existingUser->refresh_token && !$user->refreshToken) {
+                    return Socialite::driver('google')
+                        ->scopes([
+                            'https://www.googleapis.com/auth/calendar.events',
+                            'https://www.googleapis.com/auth/plus.me',
+                            'https://www.googleapis.com/auth/plus.login',
+                        ])
+                        ->with(["access_type" => "offline",
+                            "prompt" => "consent select_account"])
+                        ->redirect();
+                }
+
                 $existingUser->google_id = $user->id;
                 $existingUser->avatar = $user->avatar;
                 $existingUser->avatar_original = $user->avatar_original;
