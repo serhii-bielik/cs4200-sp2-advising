@@ -68,7 +68,7 @@ class AdvisingPeriodCreated extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'message' => 'The director has created new advising period.',
+            'message' => "The director has created new advising period for $this->semester/$this->year ($this->fromDate - $this->toDate).",
         ];
     }
 }
