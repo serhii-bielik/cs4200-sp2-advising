@@ -18,6 +18,7 @@
             <a class="navbar-brand" href="/">System Management</a>
         </div>
         <ul class="nav navbar-nav">
+            <li class="{{ Request::is('admin') ? 'active' : '' }}"><a href="{{ url('/admin') }}">System Reset</a></li>
             <li class="{{ Request::is('admin/advisers') ? 'active' : '' }}"><a href="{{ url('/admin/advisers') }}">Advisers</a></li>
             <li class="{{ Request::is('admin/students') ? 'active' : '' }}"><a href="{{ url('/admin/students') }}">Students</a></li>
         </ul>

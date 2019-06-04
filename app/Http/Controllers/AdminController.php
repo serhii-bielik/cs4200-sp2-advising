@@ -8,6 +8,7 @@ use App\Imports\StudentsImport;
 use App\User;
 use App\UserGroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 
@@ -21,8 +22,8 @@ class AdminController extends Controller
     private function isAdmin()
     {
         $groupId = auth()->user()->group_id;
-        abort_unless( $groupId == UserGroup::Admin,
-            403, "You must login under admin account in order to use this API");
+        abort_unless( ($groupId == UserGroup::Admin || $groupId == UserGroup::Director),
+            403, "You must login under admin or director account in order to use this API");
     }
 
     public function advisers()
@@ -43,9 +44,28 @@ class AdminController extends Controller
 
         Excel::import(new AdvisersImport(), $file);
 
-        //unlink($file); TODO: remove remove import file
-
         return back();
+    }
+
+    public function main()
+    {
+        $this->isAdmin();
+
+        return view('admin.main');
+    }
+
+    public function systemReset()
+    {
+        $this->isAdmin();
+
+        auth()->logout();
+
+        DB::table('jobs')->truncate();
+        DB::table('message')->truncate();
+        DB::table('adviser_advisee')->delete();
+        DB::table('user')->delete();
+
+        return redirect()->to(env('APP_URL', '/'));
     }
 
     public function students()
@@ -65,8 +85,6 @@ class AdminController extends Controller
 
         Excel::import(new StudentsImport(), $file);
         Excel::import(new StudentAdviserRelationImport(), $file);
-
-        //unlink($file); TODO: remove import file
 
         return back();
     }

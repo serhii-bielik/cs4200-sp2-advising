@@ -17,8 +17,6 @@ class AdvisersImport implements ToModel
         foreach (Faculty::all() as $faculty) {
             $this->faculties[$faculty->code] = $faculty->id;
         }
-
-        //TODO: Clean uploads dir
     }
 
     /**

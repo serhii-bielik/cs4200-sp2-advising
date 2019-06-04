@@ -93,9 +93,10 @@ Route::post('/student/reservation/cancel', 'StudentController@cancelReservation'
 
 // Admin Routes
 
+Route::get('/admin', 'AdminController@main');
+Route::get('/admin/systemReset', 'AdminController@systemReset');
 Route::get('/admin/advisers', 'AdminController@advisers');
 Route::post('/admin/advisers', 'AdminController@advisersUpload');
-//Route::get('/admin/advisers/update', 'AdminController@advisersUpdate');
 //Route::get('/admin/advisers/remove', 'AdminController@advisersRemove');
 Route::get('/admin/students', 'AdminController@students');
 Route::post('/admin/students', 'AdminController@studentsUpload');
