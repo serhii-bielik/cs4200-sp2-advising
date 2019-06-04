@@ -180,6 +180,12 @@ class StudentController extends Controller
         try {
             return auth()->user()->getStudentReservation();
         } catch (\Exception $message) {
+            if (strpos($message->getMessage(), "already advised") !== false) {
+                return response()->json(['error' => $message->getMessage(), 'type' => 'advised'], 400);
+            }
+            if (strpos($message->getMessage(), "don't have active reservation") !== false) {
+                return response()->json(['error' => $message->getMessage(), 'type' => 'none'], 400);
+            }
             return response()->json(['error' => $message->getMessage()], 400);
         }
     }
