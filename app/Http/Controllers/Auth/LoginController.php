@@ -79,13 +79,19 @@ class LoginController extends Controller
 
         if (User::count() == 0) {
             $newUser = new User;
-            $newUser->first_name = $user->name;
+            $newUser->name = $user->name;
             $newUser->au_id = '99999';
             $newUser->email = $user->email;
             $newUser->google_id = $user->id;
             $newUser->avatar = $user->avatar;
             $newUser->avatar_original = $user->avatar_original;
             $newUser->token = $user->token;
+            if ($user->refreshToken) {
+                $newUser->refresh_token = $user->refreshToken;
+            }
+            if ($user->expiresIn) {
+                $newUser->expires_in = $user->expiresIn;
+            }
             $newUser->group_id = UserGroup::Admin;
             $newUser->save();
 
