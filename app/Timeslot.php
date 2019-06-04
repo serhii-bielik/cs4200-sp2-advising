@@ -22,7 +22,8 @@ class Timeslot extends Model
     public function isReserved()
     {
         return $this->hasOne('App\Reservation', 'timeslot_id')
-            ->select('timeslot_id', 'id')->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Unconfirmed])->limit(1);
+            ->select('timeslot_id', 'id')->whereIn('status_id', [
+                ReservationStatuses::Booked, ReservationStatuses::Unconfirmed, ReservationStatuses::Advised])->limit(1);
     }
 
     public function makeReservation($userId, $isUnconfirmed)
