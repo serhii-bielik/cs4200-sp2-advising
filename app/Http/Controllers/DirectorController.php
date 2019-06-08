@@ -138,7 +138,11 @@ class DirectorController extends Controller
             return response()->json(['error' => 'Specify studentIds'], 400);
         }
 
-        AdviserAdvisee::whereIn('advisee_id', $studentIds)->delete();
+        try {
+            auth()->user()->dismissStudents($studentIds);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
 
         return $this->getUnassignedStudents();
     }

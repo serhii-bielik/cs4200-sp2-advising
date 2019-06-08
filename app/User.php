@@ -4,11 +4,14 @@ namespace App;
 
 use App\Notifications\AdviserCancelledReservation;
 use App\Notifications\AdviserConfirmedReservation;
+use App\Notifications\AdviserGotNewStudent;
 use App\Notifications\AdvisingPeriodCreated;
 use App\Notifications\AdvisingTimeslotsCreated;
 use App\Notifications\GoogleCalendarEvent;
 use App\Notifications\GoogleCalendarManager;
+use App\Notifications\StudentAssignedToAdviser;
 use App\Notifications\StudentCancelledReservation;
+use App\Notifications\StudentDismissed;
 use App\Notifications\StudentMadeFlexibleReservation;
 use App\Notifications\StudentMadeReservation;
 use App\Notifications\StudentMissedReservation;
@@ -57,6 +60,13 @@ class User extends Authenticatable
 
     public function addStudents(Array $students, $adviserId)
     {
+        $adviser = User::where('id', $adviserId)
+            ->whereIn('group_id', [UserGroup::Adviser, UserGroup::Director])->first();
+
+        if (!$adviser) {
+            throw new \Exception("Adviser #$adviserId does not exists.");
+        }
+
         foreach ($students as $studentId) {
 
             $isAssigned = AdviserAdvisee::where('adviser_id', $adviserId)
@@ -70,7 +80,16 @@ class User extends Authenticatable
                     throw new \Exception("Student #$studentId does not exists.");
                 }
 
+                $currentAdviser = $student->adviser;
+                if (count($currentAdviser)) {
+                    $currentAdviser[0]->notify(new StudentDismissed($student->name,
+                        $currentAdviser[0]->name, $currentAdviser[0]->cc_email));
+                }
+
                 AdviserAdvisee::where('advisee_id', $studentId)->delete();
+
+                $adviser->notify(new AdviserGotNewStudent($student->name, $adviser->name, $adviser->cc_email));
+                $student->notify(new StudentAssignedToAdviser($student->name, $adviser->name, $student->cc_email));
 
                 AdviserAdvisee::create([
                    'adviser_id' => $adviserId,
@@ -78,6 +97,27 @@ class User extends Authenticatable
                    'director_id' => $this->id,
                 ]);
             }
+        }
+    }
+
+    public function dismissStudents($studentIds)
+    {
+        foreach ($studentIds as $studentId) {
+
+            $student = User::where('id', $studentId)
+                ->where('group_id', UserGroup::Student)->first();
+
+            if (!$student) {
+                throw new \Exception("Student #$studentId does not exists.");
+            }
+
+            $currentAdviser = $student->adviser;
+            if (count($currentAdviser)) {
+                $currentAdviser[0]->notify(new StudentDismissed($student->name,
+                    $currentAdviser[0]->name, $currentAdviser[0]->cc_email));
+            }
+
+            AdviserAdvisee::where('advisee_id', $studentId)->delete();
         }
     }
 
@@ -513,9 +553,11 @@ class User extends Authenticatable
 
         if ($adviser[0]->is_notification) {
             if ($isUnconfirmed) {
-                $adviser[0]->notify(new StudentMadeFlexibleReservation($timeslot, $this->name, $adviser[0]->name, $adviser[0]->cc_email));
+                $adviser[0]->notify(new StudentMadeFlexibleReservation($timeslot, $this->name,
+                    $adviser[0]->name, $adviser[0]->cc_email));
             } else {
-                $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name, $adviser[0]->cc_email));
+                $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name,
+                    $adviser[0]->name, $adviser[0]->cc_email));
             }
         }
 
@@ -589,7 +631,8 @@ class User extends Authenticatable
             $student = $reservation->studentFull;
 
             if ($student->is_notification) {
-                $student->notify(new AdviserCancelledReservation($timeslot->date, $timeslot->time, $student->name, $student->cc_email));
+                $student->notify(new AdviserCancelledReservation($timeslot->date, $timeslot->time,
+                    $student->name, $student->cc_email));
             }
 
             if ($reservation->calendar_id) {
