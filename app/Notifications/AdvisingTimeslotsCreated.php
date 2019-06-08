@@ -17,13 +17,14 @@ class AdvisingTimeslotsCreated extends Notification implements ShouldQueue
     private $toDate;
 
     private $studentName;
+    private $ccEmail;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($lastPeriod, $studentName)
+    public function __construct($lastPeriod, $studentName, $ccEmail)
     {
         $this->year = $lastPeriod->year;
         $this->semester = $lastPeriod->semester;
@@ -31,6 +32,7 @@ class AdvisingTimeslotsCreated extends Notification implements ShouldQueue
         $this->toDate = $lastPeriod->end_date;
 
         $this->studentName = $studentName;
+        $this->ccEmail = $ccEmail;
     }
 
     /**
@@ -52,13 +54,19 @@ class AdvisingTimeslotsCreated extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->line("Dear $this->studentName.")
-                    ->line("Your adviser has prepared timeslots for a new advising period: $this->semester/$this->year.")
-                    ->line("This period will be from $this->fromDate till $this->toDate")
-                    ->line('Please book timeslot for your advising meeting.')
-                    ->action('Open Advising Scheduling Panel', url(env('APP_URL', '/')))
-                    ->line('Thank you!');
+        $email = (new MailMessage)
+            ->line("Dear $this->studentName.")
+            ->line("Your adviser has prepared timeslots for a new advising period: $this->semester/$this->year.")
+            ->line("This period will be from $this->fromDate till $this->toDate")
+            ->line('Please book timeslot for your advising meeting.')
+            ->action('Open Advising Scheduling Panel', url(env('APP_URL', '/')))
+            ->line('Thank you!');
+
+        if ($this->ccEmail) {
+            $email->cc($this->ccEmail);
+        }
+
+        return $email;
     }
 
     /**

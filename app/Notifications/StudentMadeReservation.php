@@ -13,6 +13,7 @@ class StudentMadeReservation extends Notification implements ShouldQueue
 
     private $studentName;
     private $adviserName;
+    private $ccEmail;
     private $timeslot;
 
     /**
@@ -20,11 +21,12 @@ class StudentMadeReservation extends Notification implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($timeslot, $studentName, $adviserName)
+    public function __construct($timeslot, $studentName, $adviserName, $ccEmail)
     {
         $this->timeslot = $timeslot;
         $this->studentName = $studentName;
         $this->adviserName = $adviserName;
+        $this->ccEmail = $ccEmail;
     }
 
     /**
@@ -46,13 +48,19 @@ class StudentMadeReservation extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-                    ->line("Dear $this->adviserName.")
-                    ->line("Your student $this->studentName has made reservation for advising on " .
-                        $this->timeslot->date . " at " . $this->timeslot->time)
-                    ->line('You can change reservation and advising status at the panel.')
-                    ->action('Open Advising Scheduling Panel', url(env('APP_URL', '/')))
-                    ->line('Thank you!');
+        $email = (new MailMessage)
+            ->line("Dear $this->adviserName.")
+            ->line("Your student $this->studentName has made reservation for advising on " .
+                $this->timeslot->date . " at " . $this->timeslot->time)
+            ->line('You can change reservation and advising status at the panel.')
+            ->action('Open Advising Scheduling Panel', url(env('APP_URL', '/')))
+            ->line('Thank you!');
+
+        if ($this->ccEmail) {
+            $email->cc($this->ccEmail);
+        }
+
+        return $email;
     }
 
     /**

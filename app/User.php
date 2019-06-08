@@ -513,9 +513,9 @@ class User extends Authenticatable
 
         if ($adviser[0]->is_notification) {
             if ($isUnconfirmed) {
-                $adviser[0]->notify(new StudentMadeFlexibleReservation($timeslot, $this->name, $adviser[0]->name));
+                $adviser[0]->notify(new StudentMadeFlexibleReservation($timeslot, $this->name, $adviser[0]->name, $adviser[0]->cc_email));
             } else {
-                $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name));
+                $adviser[0]->notify(new StudentMadeReservation($timeslot, $this->name, $adviser[0]->name, $adviser[0]->cc_email));
             }
         }
 
@@ -575,7 +575,8 @@ class User extends Authenticatable
 
             $adviser = $this->studentAdviser[0];
             if ($adviser->is_notification) {
-                $adviser->notify(new StudentCancelledReservation($timeslot->date, $timeslot->time, $this->name, $adviser->name));
+                $adviser->notify(new StudentCancelledReservation($timeslot->date, $timeslot->time, $this->name,
+                    $adviser->name, $adviser->cc_email));
             }
 
             if ($reservation->calendar_id) {
@@ -588,7 +589,7 @@ class User extends Authenticatable
             $student = $reservation->studentFull;
 
             if ($student->is_notification) {
-                $student->notify(new AdviserCancelledReservation($timeslot->date, $timeslot->time, $student->name));
+                $student->notify(new AdviserCancelledReservation($timeslot->date, $timeslot->time, $student->name, $student->cc_email));
             }
 
             if ($reservation->calendar_id) {
@@ -646,7 +647,7 @@ class User extends Authenticatable
         $student = $reservation->student;
         if ($student->is_notification) {
             $student->notify(new StudentMissedReservation($reservation->timeslot->date, $reservation->timeslot->time,
-                $student->name));
+                $student->name, $student->cc_email));
         }
 
         $reservation->miss($this->id);
@@ -671,7 +672,7 @@ class User extends Authenticatable
         $student = $reservation->student;
         if ($student->is_notification) {
             $student->notify(new AdviserConfirmedReservation($reservation->timeslot->date, $reservation->timeslot->time,
-                $student->name));
+                $student->name, $student->cc_email));
         }
 
         return $reservation;
@@ -974,7 +975,7 @@ class User extends Authenticatable
             ->get();
 
         foreach ($advisers as $adviser) {
-            $adviser->notify(new AdvisingPeriodCreated($lastPeriod, $adviser->name));
+            $adviser->notify(new AdvisingPeriodCreated($lastPeriod, $adviser->name, $adviser->cc_email));
         }
 
         $lastPeriod->is_notified = 1;
@@ -1016,7 +1017,7 @@ class User extends Authenticatable
 
         foreach ($students as $student) {
             if (!$student->reservation) {
-                $student->notify(new AdvisingTimeslotsCreated($lastPeriod, $student->name));
+                $student->notify(new AdvisingTimeslotsCreated($lastPeriod, $student->name, $student->cc_email));
             }
         }
 
