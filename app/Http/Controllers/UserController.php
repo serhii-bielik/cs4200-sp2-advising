@@ -86,6 +86,7 @@ class UserController extends Controller
 
         $settings['phone'] = $user->phone;
         $settings['office'] = $user->office;
+        $settings['cc_email'] = $user->cc_email;
         $settings['is_notification'] = $user->is_notification;
         $settings['is_allow_flexible_timeslots'] = $user->is_allow_flexible_timeslots;
         $settings['interval'] = $user->interval;
@@ -102,6 +103,11 @@ class UserController extends Controller
         $phone = request('phone');
         if (isset($phone)) {
             $user->phone = $phone;
+        }
+
+        $ccEmail = request('cc_email');
+        if (isset($ccEmail)) {
+            $user->cc_email = $ccEmail;
         }
 
         if (!$user->isStudent()) {
@@ -142,7 +148,9 @@ class UserController extends Controller
 
         $settings['phone'] = $user->phone;
         $settings['office'] = $user->office;
+        $settings['cc_email'] = $user->cc_email;
         $settings['is_notification'] = $user->is_notification;
+        $settings['is_allow_flexible_timeslots'] = $user->is_allow_flexible_timeslots;
         $settings['interval'] = $user->interval;
 
         return $settings;
