@@ -207,6 +207,23 @@ class DirectorController extends Controller
         }
     }
 
+    public function reportForPeriod()
+    {
+        $this->isDirector();
+
+        $periodId = request('periodId');
+
+        if (!$periodId) {
+            return response()->json(['error' => 'Specify periodId.'], 400);
+        }
+
+        try {
+            return auth()->user()->getDirectorStatsForPeriod($periodId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
     public function adviserData()
     {
         $this->isDirector();

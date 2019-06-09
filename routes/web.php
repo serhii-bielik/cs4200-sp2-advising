@@ -40,6 +40,7 @@ Route::post('/director/periods', 'DirectorController@addPeriod');
 Route::post('/director/period/remove', 'DirectorController@removePeriod');
 Route::post('/director/period/notify', 'DirectorController@notifyPeriod');
 Route::get('/director/period/notify/status', 'DirectorController@notifyPeriodStatus');
+Route::get('/director/period/{periodId}/report', 'DirectorController@reportForPeriod');
 Route::get('/director/report', 'DirectorController@report');
 Route::get('/director/adviser/{adviserId}', 'DirectorController@adviserData');
 

@@ -908,6 +908,62 @@ class User extends Authenticatable
         return $stats;
     }
 
+    public function getDirectorStatsForPeriod($periodId)
+    {
+        $stats = [];
+
+        $stats['total_advisee'] = User::select('id')
+            ->where('group_id', UserGroup::Student)
+            ->count();
+
+        $period = Period::where('id', $periodId)->first();
+        if (!$period) {
+            throw new \Exception("Period #$periodId does not exist.");
+        }
+
+        $stats['total_reserved'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $period->id)
+            ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Unconfirmed]))
+            ->count();
+
+        $stats['total_attended'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $period->id)
+            ->where('status_id', ReservationStatuses::Advised))
+            ->count();
+
+        $stats['total_canceled'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $period->id)
+            ->where('status_id', ReservationStatuses::Canceled))
+            ->count();
+
+        $stats['total_missed'] = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $period->id)
+            ->where('status_id', ReservationStatuses::Missed))
+            ->count();
+
+        $total_unreserved = User::where('group_id', UserGroup::Student)
+            ->whereNotIn('id', Reservation::select('advisee_id')
+                ->whereIn('timeslot_id', Timeslot::select('id')
+                    ->where('period_id', $period->id)
+                    ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised, ReservationStatuses::Unconfirmed])))
+            ->with('faculty', 'adviser')
+            ->get()
+            ->toArray();
+
+        for ($i = 0; $i < count($total_unreserved); $i++) {
+            if (isset($total_unreserved[$i]['adviser'][0])) {
+                $total_unreserved[$i]['adviser'] = $total_unreserved[$i]['adviser'][0];
+            } else {
+                $total_unreserved[$i]['adviser'] = null;
+            }
+        }
+
+        $stats['total_unreserved'] = count($total_unreserved);
+        $stats['unreserved_user'] = $total_unreserved;
+
+        return $stats;
+    }
+
     public function getDirectorStats()
     {
         $stats = [];
