@@ -23,6 +23,18 @@ class Reservation extends Model
         return $this->belongsTo('App\User', 'advisee_id')->select('id', 'name', 'email', 'phone', 'is_notification');
     }
 
+    public function closedBy()
+    {
+        return $this->belongsTo('App\User', 'closed_by')->select('id', 'name', 'email', 'phone', 'is_notification');
+    }
+
+    public function studentForReport()
+    {
+        return $this->belongsTo('App\User', 'advisee_id')
+            ->select('id', 'au_id', 'name', 'email', 'phone', 'is_notification', 'faculty_id')
+            ->with('faculty', 'adviser');
+    }
+
     public function studentFull()
     {
         return $this->belongsTo('App\User', 'advisee_id');

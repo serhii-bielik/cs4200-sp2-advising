@@ -908,6 +908,145 @@ class User extends Authenticatable
         return $stats;
     }
 
+    public function getDirectorStatsForPeriodUnreserved($periodId)
+    {
+        $period = Period::where('id', $periodId)->first();
+        if (!$period) {
+            throw new \Exception("Period #$periodId does not exist.");
+        }
+
+        $unreserved = User::where('group_id', UserGroup::Student)
+            ->whereNotIn('id', Reservation::select('advisee_id')
+                ->whereIn('timeslot_id', Timeslot::select('id')
+                    ->where('period_id', $period->id)
+                    ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Advised, ReservationStatuses::Unconfirmed])))
+            ->with('faculty', 'adviser')
+            ->get()
+            ->toArray();
+
+        for ($i = 0; $i < count($unreserved); $i++) {
+            if (isset($unreserved[$i]['adviser'][0])) {
+                $unreserved[$i]['adviser'] = $unreserved[$i]['adviser'][0];
+            } else {
+                $unreserved[$i]['adviser'] = null;
+            }
+        }
+
+        return $unreserved;
+    }
+
+    public function getDirectorStatsForPeriodAttended($periodId)
+    {
+        $period = Period::where('id', $periodId)->first();
+        if (!$period) {
+            throw new \Exception("Period #$periodId does not exist.");
+        }
+
+        $reservations = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $period->id)
+            ->where('status_id', ReservationStatuses::Advised))
+            ->with('studentForReport', 'timeslot', 'closedBy')
+            ->get()
+            ->toArray();
+
+        for ($i = 0; $i < count($reservations); $i++) {
+            if (isset($reservations[$i]['student_for_report']['adviser'][0])) {
+                $reservations[$i]['student_for_report']['adviser'] = $reservations[$i]['student_for_report']['adviser'][0];
+            } else {
+                $reservations[$i]['student_for_report']['adviser'] = null;
+            }
+
+            $reservations[$i]['student'] = $reservations[$i]['student_for_report'];
+            unset($reservations[$i]['student_for_report']);
+        }
+
+        return $reservations;
+    }
+
+    public function getDirectorStatsForPeriodCancelled($periodId)
+    {
+        $period = Period::where('id', $periodId)->first();
+        if (!$period) {
+            throw new \Exception("Period #$periodId does not exist.");
+        }
+
+        $reservations = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $period->id)
+            ->where('status_id', ReservationStatuses::Canceled))
+            ->with('studentForReport', 'timeslot', 'closedBy')
+            ->get()
+            ->toArray();
+
+        for ($i = 0; $i < count($reservations); $i++) {
+            if (isset($reservations[$i]['student_for_report']['adviser'][0])) {
+                $reservations[$i]['student_for_report']['adviser'] = $reservations[$i]['student_for_report']['adviser'][0];
+            } else {
+                $reservations[$i]['student_for_report']['adviser'] = null;
+            }
+
+            $reservations[$i]['student'] = $reservations[$i]['student_for_report'];
+            unset($reservations[$i]['student_for_report']);
+        }
+
+        return $reservations;
+    }
+
+    public function getDirectorStatsForPeriodMissed($periodId)
+    {
+        $period = Period::where('id', $periodId)->first();
+        if (!$period) {
+            throw new \Exception("Period #$periodId does not exist.");
+        }
+
+        $reservations = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $period->id)
+            ->where('status_id', ReservationStatuses::Missed))
+            ->with('studentForReport', 'timeslot', 'closedBy')
+            ->get()
+            ->toArray();
+
+        for ($i = 0; $i < count($reservations); $i++) {
+            if (isset($reservations[$i]['student_for_report']['adviser'][0])) {
+                $reservations[$i]['student_for_report']['adviser'] = $reservations[$i]['student_for_report']['adviser'][0];
+            } else {
+                $reservations[$i]['student_for_report']['adviser'] = null;
+            }
+
+            $reservations[$i]['student'] = $reservations[$i]['student_for_report'];
+            unset($reservations[$i]['student_for_report']);
+        }
+
+        return $reservations;
+    }
+
+    public function getDirectorStatsForPeriodReserved($periodId)
+    {
+        $period = Period::where('id', $periodId)->first();
+        if (!$period) {
+            throw new \Exception("Period #$periodId does not exist.");
+        }
+
+        $reservations = Reservation::whereIn('timeslot_id', Timeslot::select('id')
+            ->where('period_id', $period->id)
+            ->whereIn('status_id', [ReservationStatuses::Booked, ReservationStatuses::Unconfirmed]))
+            ->with('studentForReport', 'timeslot', 'closedBy')
+            ->get()
+            ->toArray();
+
+        for ($i = 0; $i < count($reservations); $i++) {
+            if (isset($reservations[$i]['student_for_report']['adviser'][0])) {
+                $reservations[$i]['student_for_report']['adviser'] = $reservations[$i]['student_for_report']['adviser'][0];
+            } else {
+                $reservations[$i]['student_for_report']['adviser'] = null;
+            }
+
+            $reservations[$i]['student'] = $reservations[$i]['student_for_report'];
+            unset($reservations[$i]['student_for_report']);
+        }
+
+        return $reservations;
+    }
+
     public function getDirectorStatsForPeriod($periodId)
     {
         $stats = [];

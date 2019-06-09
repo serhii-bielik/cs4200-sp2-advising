@@ -224,6 +224,91 @@ class DirectorController extends Controller
         }
     }
 
+    public function reportForPeriodReserved()
+    {
+        $this->isDirector();
+
+        $periodId = request('periodId');
+
+        if (!$periodId) {
+            return response()->json(['error' => 'Specify periodId.'], 400);
+        }
+
+        try {
+            return auth()->user()->getDirectorStatsForPeriodReserved($periodId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
+    public function reportForPeriodUnreserved()
+    {
+        $this->isDirector();
+
+        $periodId = request('periodId');
+
+        if (!$periodId) {
+            return response()->json(['error' => 'Specify periodId.'], 400);
+        }
+
+        try {
+            return auth()->user()->getDirectorStatsForPeriodUnreserved($periodId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
+    public function reportForPeriodAttended()
+    {
+        $this->isDirector();
+
+        $periodId = request('periodId');
+
+        if (!$periodId) {
+            return response()->json(['error' => 'Specify periodId.'], 400);
+        }
+
+        try {
+            return auth()->user()->getDirectorStatsForPeriodAttended($periodId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
+    public function reportForPeriodCancelled()
+    {
+        $this->isDirector();
+
+        $periodId = request('periodId');
+
+        if (!$periodId) {
+            return response()->json(['error' => 'Specify periodId.'], 400);
+        }
+
+        try {
+            return auth()->user()->getDirectorStatsForPeriodCancelled($periodId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
+    public function reportForPeriodMissed()
+    {
+        $this->isDirector();
+
+        $periodId = request('periodId');
+
+        if (!$periodId) {
+            return response()->json(['error' => 'Specify periodId.'], 400);
+        }
+
+        try {
+            return auth()->user()->getDirectorStatsForPeriodMissed($periodId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
     public function adviserData()
     {
         $this->isDirector();

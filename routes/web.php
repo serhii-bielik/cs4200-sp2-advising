@@ -41,6 +41,11 @@ Route::post('/director/period/remove', 'DirectorController@removePeriod');
 Route::post('/director/period/notify', 'DirectorController@notifyPeriod');
 Route::get('/director/period/notify/status', 'DirectorController@notifyPeriodStatus');
 Route::get('/director/period/{periodId}/report', 'DirectorController@reportForPeriod');
+Route::get('/director/period/{periodId}/report/reserved', 'DirectorController@reportForPeriodReserved');
+Route::get('/director/period/{periodId}/report/unreserved', 'DirectorController@reportForPeriodUnreserved');
+Route::get('/director/period/{periodId}/report/attended', 'DirectorController@reportForPeriodAttended');
+Route::get('/director/period/{periodId}/report/cancelled', 'DirectorController@reportForPeriodCancelled');
+Route::get('/director/period/{periodId}/report/missed', 'DirectorController@reportForPeriodMissed');
 Route::get('/director/report', 'DirectorController@report');
 Route::get('/director/adviser/{adviserId}', 'DirectorController@adviserData');
 
