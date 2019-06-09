@@ -45,7 +45,8 @@
         <button v-on:click="confirmReservation">Confirm Reservation</button>
 
         <p>@{{ settings }}</p>
-        <button v-on:click="setSettings">Update Settings</button>
+        <button v-on:click="setSettings">Update Settings</button><br><br>
+        <button v-on:click="graduateStudent">Graduate Student</button>
     </div>
 
     <hr>
@@ -206,6 +207,13 @@
                 axios.post('/api/adviser/reservation/confirm',{
                     reservation_id: 25,
                 }).then(response => this.period = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            graduateStudent: function () {
+                axios.post('/api/director/student/graduate',{
+                    student_id: 958,
+                }).then(response => this.settings = response.data)
                     .catch(error => console.error(error));
             },
         }

@@ -12,6 +12,7 @@ use App\Notifications\GoogleCalendarManager;
 use App\Notifications\StudentAssignedToAdviser;
 use App\Notifications\StudentCancelledReservation;
 use App\Notifications\StudentDismissed;
+use App\Notifications\StudentGraduated;
 use App\Notifications\StudentMadeFlexibleReservation;
 use App\Notifications\StudentMadeReservation;
 use App\Notifications\StudentMissedReservation;
@@ -649,6 +650,27 @@ class User extends Authenticatable
         } else {
             return $reservation;
         }
+    }
+
+    public function graduateStudent($studentId)
+    {
+        $student = User::where('id', $studentId)
+            ->where('group_id', UserGroup::Student)->first();
+
+        if (!$student) {
+            throw new \Exception("Student #$studentId does not exists.");
+        }
+
+        $currentAdviser = $student->adviser;
+        if (count($currentAdviser)) {
+            $currentAdviser[0]->notify(new StudentGraduated($student->name,
+                $currentAdviser[0]->name, $currentAdviser[0]->cc_email));
+        }
+
+        $student->delete();
+
+        return ['status' => 'success',
+            'message' => 'Student has been removed.'];
     }
 
     private function isTooEarlyToChangeReservationStatus($timeslot)

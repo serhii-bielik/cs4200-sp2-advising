@@ -30,6 +30,7 @@ Route::post('/notifications/readAll', 'UserController@readAllNotifications');
 Route::get('/director/advisers', 'DirectorController@advisers');
 Route::get('/director/students', 'DirectorController@students');
 Route::get('/director/student/{studentId}', 'DirectorController@student');
+Route::post('/director/student/graduate', 'AdminController@studentGraduate');
 Route::get('/director/unassignedStudents', 'DirectorController@unassignedStudents');
 Route::get('/director/assignedStudents', 'DirectorController@assignedStudents');
 Route::post('/director/assign', 'DirectorController@assign');

@@ -88,4 +88,21 @@ class AdminController extends Controller
 
         return back();
     }
+
+    public function studentGraduate()
+    {
+        $this->isAdmin();
+
+        $studentId = request('student_id');
+
+        if (!$studentId) {
+            return response()->json(['error' => 'Specify student_id'], 400);
+        }
+
+        try {
+            return auth()->user()->graduateStudent($studentId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
 }
