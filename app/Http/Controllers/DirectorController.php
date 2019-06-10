@@ -25,9 +25,20 @@ class DirectorController extends Controller
     {
         $this->isDirector();
 
-        return User::where('group_id', UserGroup::Student)
-            ->with('faculty')
-            ->get();
+        $students = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])
+            ->with('faculty', 'reservation', 'adviser', 'group')
+            ->get()
+            ->toArray();
+
+        for ($i = 0; $i < count($students); $i++) {
+            if (isset($students[$i]['adviser'][0])) {
+                $students[$i]['adviser'] = $students[$i]['adviser'][0];
+            } else {
+                $students[$i]['adviser'] = null;
+            }
+        }
+
+        return $students;
     }
 
     public function student()

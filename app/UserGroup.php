@@ -8,4 +8,5 @@ abstract class UserGroup
     const Adviser = 2;
     const Director = 3;
     const Admin = 4;
+    const Inactive = 5;
 }
