@@ -46,7 +46,7 @@
 
         <p>@{{ settings }}</p>
         <button v-on:click="setSettings">Update Settings</button><br>
-        <button v-on:click="graduateStudent">Graduate Student</button><br>
+        <button v-on:click="removeStudent">Remove Student</button><br>
         <button v-on:click="updateStudent">Update Student</button>
     </div>
 
@@ -211,8 +211,8 @@
                     .catch(error => console.error(error));
             },
 
-            graduateStudent: function () {
-                axios.post('/api/director/student/graduate',{
+            removeStudent: function () {
+                axios.post('/api/director/student/remove',{
                     student_id: 958,
                 }).then(response => this.settings = response.data)
                     .catch(error => console.error(error));

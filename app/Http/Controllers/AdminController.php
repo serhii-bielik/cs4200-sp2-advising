@@ -89,7 +89,7 @@ class AdminController extends Controller
         return back();
     }
 
-    public function studentGraduate()
+    public function studentRemove()
     {
         $this->isAdmin();
 
@@ -100,7 +100,7 @@ class AdminController extends Controller
         }
 
         try {
-            return auth()->user()->graduateStudent($studentId);
+            return auth()->user()->studentRemove($studentId);
         } catch (\Exception $message) {
             return response()->json(['error' => $message->getMessage()], 400);
         }

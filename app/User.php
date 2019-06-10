@@ -12,7 +12,7 @@ use App\Notifications\GoogleCalendarManager;
 use App\Notifications\StudentAssignedToAdviser;
 use App\Notifications\StudentCancelledReservation;
 use App\Notifications\StudentDismissed;
-use App\Notifications\StudentGraduated;
+use App\Notifications\StudentRemoved;
 use App\Notifications\StudentMadeFlexibleReservation;
 use App\Notifications\StudentMadeReservation;
 use App\Notifications\StudentMissedReservation;
@@ -652,7 +652,7 @@ class User extends Authenticatable
         }
     }
 
-    public function graduateStudent($studentId)
+    public function studentRemove($studentId)
     {
         $student = User::where('id', $studentId)
             ->where('group_id', UserGroup::Student)->first();
@@ -663,7 +663,7 @@ class User extends Authenticatable
 
         $currentAdviser = $student->adviser;
         if (count($currentAdviser)) {
-            $currentAdviser[0]->notify(new StudentGraduated($student->name,
+            $currentAdviser[0]->notify(new StudentRemoved($student->name,
                 $currentAdviser[0]->name, $currentAdviser[0]->cc_email));
         }
 

@@ -7,7 +7,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class StudentGraduated extends Notification implements ShouldQueue
+class StudentRemoved extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -48,7 +48,7 @@ class StudentGraduated extends Notification implements ShouldQueue
     {
         $email = (new MailMessage)
             ->line("Dear $this->adviserName.")
-            ->line("Your student $this->studentName has graduated and no longer requires advising.")
+            ->line("Your student $this->studentName has been removed by director and no longer requires advising.")
             ->line('You can see your students list at the panel.')
             ->action('Open Advising Scheduling Panel', url(env('APP_URL', '/')))
             ->line('Thank you!');
@@ -69,7 +69,7 @@ class StudentGraduated extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'message' => "Your student $this->studentName has graduated and no longer requires advising.",
+            'message' => "Your student $this->studentName has been removed by director and no longer requires advising.",
         ];
     }
 }
