@@ -30,6 +30,7 @@ Route::post('/notifications/readAll', 'UserController@readAllNotifications');
 Route::get('/director/advisers', 'DirectorController@advisers');
 Route::get('/director/students', 'DirectorController@students');
 Route::get('/director/student/{studentId}', 'DirectorController@student');
+Route::post('/director/student', 'DirectorController@updateStudent');
 Route::post('/director/student/graduate', 'AdminController@studentGraduate');
 Route::get('/director/unassignedStudents', 'DirectorController@unassignedStudents');
 Route::get('/director/assignedStudents', 'DirectorController@assignedStudents');
@@ -51,7 +52,7 @@ Route::get('/director/adviser/{adviserId}', 'DirectorController@adviserData');
 
 // Adviser Routes
 
-// Route::get('/adviser', 'AdviserController@dashboard');
+//Route::get('/adviser', 'AdviserController@dashboard');
 Route::get('/adviser/students', 'AdviserController@students');
 Route::get('/adviser/student/{studentId}', 'AdviserController@student');
 Route::get('/adviser/settings', 'UserController@settings');

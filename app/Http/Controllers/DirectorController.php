@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\AdviserAdvisee;
+use App\Faculty;
 use App\Period;
 use App\User;
 use App\UserGroup;
@@ -39,6 +40,57 @@ class DirectorController extends Controller
         }
 
         return $students;
+    }
+
+    public function updateStudent()
+    {
+        $this->isDirector();
+
+        $studentId = intval(request('student_id'));
+
+        $student = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])
+            ->where('id', $studentId)
+            ->with('faculty', 'reservation', 'adviser', 'publicNotes')
+            ->first();
+
+        if (!$student) {
+            return response()->json(['error' => 'Student does not exist.'], 400);
+        }
+
+        $email = request('email');
+        if (isset($email)) {
+            $student->email = $email;
+        }
+
+        $au_id = request('au_id');
+        if (isset($au_id)) {
+            $student->au_id = $au_id;
+        }
+
+        $name = request('name');
+        if (isset($name)) {
+            $student->name = $name;
+        }
+
+        $faculty_id = request('faculty_id');
+        if (isset($faculty_id)) {
+            $faculty = Faculty::where('id', $faculty_id)->first();
+            if ($faculty) {
+                $student->faculty_id = $faculty->id;
+            }
+        }
+
+        $student->save();
+
+        $student = $student->toArray();
+
+        if (isset($student['adviser'][0])) {
+            $student['adviser'] = $student['adviser'][0];
+        } else {
+            $student['adviser'] = null;
+        }
+
+        return $student;
     }
 
     public function student()

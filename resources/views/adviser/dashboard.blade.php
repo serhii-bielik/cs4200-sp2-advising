@@ -45,8 +45,9 @@
         <button v-on:click="confirmReservation">Confirm Reservation</button>
 
         <p>@{{ settings }}</p>
-        <button v-on:click="setSettings">Update Settings</button><br><br>
-        <button v-on:click="graduateStudent">Graduate Student</button>
+        <button v-on:click="setSettings">Update Settings</button><br>
+        <button v-on:click="graduateStudent">Graduate Student</button><br>
+        <button v-on:click="updateStudent">Update Student</button>
     </div>
 
     <hr>
@@ -213,6 +214,17 @@
             graduateStudent: function () {
                 axios.post('/api/director/student/graduate',{
                     student_id: 958,
+                }).then(response => this.settings = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            updateStudent: function () {
+                axios.post('/api/director/student',{
+                    student_id: 958,
+                    email: 'u5748106@au.edu',
+                    au_id: '5748106',
+                    name: 'Serhii Bielik',
+                    faculty_id: 1,
                 }).then(response => this.settings = response.data)
                     .catch(error => console.error(error));
             },
