@@ -47,7 +47,9 @@
         <p>@{{ settings }}</p>
         <button v-on:click="setSettings">Update Settings</button><br>
         <button v-on:click="removeStudent">Remove Student</button><br>
-        <button v-on:click="updateStudent">Update Student</button>
+        <button v-on:click="updateStudent">Update Student</button><br><br>
+        <button v-on:click="activateStudent">Activate Student</button>
+        <button v-on:click="suspendStudent">Suspend Student</button>
     </div>
 
     <hr>
@@ -225,6 +227,20 @@
                     au_id: '5748106',
                     name: 'Serhii Bielik',
                     faculty_id: 1,
+                }).then(response => this.settings = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            activateStudent: function () {
+                axios.post('/api/director/student/activate',{
+                    student_id: 958,
+                }).then(response => this.settings = response.data)
+                    .catch(error => console.error(error));
+            },
+
+            suspendStudent: function () {
+                axios.post('/api/director/student/suspend',{
+                    student_id: 958,
                 }).then(response => this.settings = response.data)
                     .catch(error => console.error(error));
             },

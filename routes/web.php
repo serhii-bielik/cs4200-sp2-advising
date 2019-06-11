@@ -32,6 +32,8 @@ Route::get('/director/students', 'DirectorController@students');
 Route::get('/director/student/{studentId}', 'DirectorController@student');
 Route::post('/director/student', 'DirectorController@updateStudent');
 Route::post('/director/student/remove', 'AdminController@studentRemove');
+Route::post('/director/student/suspend', 'AdminController@studentSuspend');
+Route::post('/director/student/activate', 'AdminController@studentActivate');
 Route::get('/director/unassignedStudents', 'DirectorController@unassignedStudents');
 Route::get('/director/assignedStudents', 'DirectorController@assignedStudents');
 Route::post('/director/assign', 'DirectorController@assign');

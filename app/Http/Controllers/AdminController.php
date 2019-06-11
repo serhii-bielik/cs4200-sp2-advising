@@ -105,4 +105,38 @@ class AdminController extends Controller
             return response()->json(['error' => $message->getMessage()], 400);
         }
     }
+
+    public function studentSuspend()
+    {
+        $this->isAdmin();
+
+        $studentId = request('student_id');
+
+        if (!$studentId) {
+            return response()->json(['error' => 'Specify student_id'], 400);
+        }
+
+        try {
+            return auth()->user()->studentSuspend($studentId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
+
+    public function studentActivate()
+    {
+        $this->isAdmin();
+
+        $studentId = request('student_id');
+
+        if (!$studentId) {
+            return response()->json(['error' => 'Specify student_id'], 400);
+        }
+
+        try {
+            return auth()->user()->studentActivate($studentId);
+        } catch (\Exception $message) {
+            return response()->json(['error' => $message->getMessage()], 400);
+        }
+    }
 }

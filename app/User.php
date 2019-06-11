@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Notifications\AccountActivated;
+use App\Notifications\AccountSuspended;
 use App\Notifications\AdviserCancelledReservation;
 use App\Notifications\AdviserConfirmedReservation;
 use App\Notifications\AdviserGotNewStudent;
@@ -9,6 +11,8 @@ use App\Notifications\AdvisingPeriodCreated;
 use App\Notifications\AdvisingTimeslotsCreated;
 use App\Notifications\GoogleCalendarEvent;
 use App\Notifications\GoogleCalendarManager;
+use App\Notifications\StudentAccountActivated;
+use App\Notifications\StudentAccountSuspended;
 use App\Notifications\StudentAssignedToAdviser;
 use App\Notifications\StudentCancelledReservation;
 use App\Notifications\StudentDismissed;
@@ -671,6 +675,54 @@ class User extends Authenticatable
 
         return ['status' => 'success',
             'message' => 'Student has been removed.'];
+    }
+
+    public function studentSuspend($studentId)
+    {
+        $student = User::where('id', $studentId)
+            ->where('group_id', UserGroup::Student)->first();
+
+        if (!$student) {
+            throw new \Exception("Student #$studentId does not exists or already suspended.");
+        }
+
+        $student->group_id = UserGroup::Inactive;
+        $student->save();
+
+        $currentAdviser = $student->adviser;
+        if (count($currentAdviser)) {
+            $currentAdviser[0]->notify(new StudentAccountSuspended($student->name,
+                $currentAdviser[0]->name, $currentAdviser[0]->cc_email));
+        }
+
+        $student->notify(new AccountSuspended($student->name, $student->cc_email));
+
+        return ['status' => 'success',
+            'message' => 'Student\'s account has been suspended.'];
+    }
+
+    public function studentActivate($studentId)
+    {
+        $student = User::where('id', $studentId)
+            ->where('group_id', UserGroup::Inactive)->first();
+
+        if (!$student) {
+            throw new \Exception("Student #$studentId does not exists or already activated.");
+        }
+
+        $student->group_id = UserGroup::Student;
+        $student->save();
+
+        $currentAdviser = $student->adviser;
+        if (count($currentAdviser)) {
+            $currentAdviser[0]->notify(new StudentAccountActivated($student->name,
+                $currentAdviser[0]->name, $currentAdviser[0]->cc_email));
+        }
+
+        $student->notify(new AccountActivated($student->name, $student->cc_email));
+
+        return ['status' => 'success',
+            'message' => 'Student\'s account has been activated.'];
     }
 
     private function isTooEarlyToChangeReservationStatus($timeslot)
