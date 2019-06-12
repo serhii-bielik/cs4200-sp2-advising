@@ -159,7 +159,7 @@ class User extends Authenticatable
     public function students()
     {
         return $this->belongsToMany('App\User', 'adviser_advisee', 'adviser_id', 'advisee_id')
-            ->whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->with('faculty', 'reservation');
+            ->where('group_id', UserGroup::Student)->with('faculty', 'reservation');
     }
 
     public function lastPublicNoteForStudent()
