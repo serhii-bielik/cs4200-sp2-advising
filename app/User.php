@@ -80,7 +80,7 @@ class User extends Authenticatable
             if (!$isAssigned) {
 
                 $student = User::where('id', $studentId)
-                    ->where('group_id', UserGroup::Student)->first();
+                    ->whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->first();
                 if (!$student) {
                     throw new \Exception("Student #$studentId does not exists.");
                 }
@@ -110,7 +110,7 @@ class User extends Authenticatable
         foreach ($studentIds as $studentId) {
 
             $student = User::where('id', $studentId)
-                ->where('group_id', UserGroup::Student)->first();
+                ->whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->first();
 
             if (!$student) {
                 throw new \Exception("Student #$studentId does not exists.");
@@ -159,7 +159,7 @@ class User extends Authenticatable
     public function students()
     {
         return $this->belongsToMany('App\User', 'adviser_advisee', 'adviser_id', 'advisee_id')
-            ->with('faculty', 'reservation');
+            ->whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->with('faculty', 'reservation');
     }
 
     public function lastPublicNoteForStudent()
@@ -174,7 +174,7 @@ class User extends Authenticatable
 
     public function isStudent()
     {
-        return $this->group_id == UserGroup::Student;
+        return $this->group_id == UserGroup::Student || $this->group_id == UserGroup::Inactive;
     }
 
     public function addPublicNote($studentId, $note)
@@ -659,7 +659,7 @@ class User extends Authenticatable
     public function studentRemove($studentId)
     {
         $student = User::where('id', $studentId)
-            ->where('group_id', UserGroup::Student)->first();
+            ->whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->first();
 
         if (!$student) {
             throw new \Exception("Student #$studentId does not exists.");
@@ -860,7 +860,7 @@ class User extends Authenticatable
      */
     private function getReservationById($reservationId)
     {
-        if ($this->group_id == UserGroup::Student) {
+        if ($this->group_id == UserGroup::Student || $this->group_id == UserGroup::Inactive) {
             $reservation = Reservation::where('id', $reservationId)
                 ->where('advisee_id', $this->id)
                 ->first();
@@ -967,7 +967,7 @@ class User extends Authenticatable
             throw new \Exception("Period #$periodId does not exist.");
         }
 
-        $unreserved = User::where('group_id', UserGroup::Student)
+        $unreserved = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])
             ->whereNotIn('id', Reservation::select('advisee_id')
                 ->whereIn('timeslot_id', Timeslot::select('id')
                     ->where('period_id', $period->id)
@@ -1104,7 +1104,7 @@ class User extends Authenticatable
         $stats = [];
 
         $stats['total_advisee'] = User::select('id')
-            ->where('group_id', UserGroup::Student)
+            ->whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])
             ->count();
 
         $period = Period::where('id', $periodId)->first();
@@ -1132,7 +1132,7 @@ class User extends Authenticatable
             ->where('status_id', ReservationStatuses::Missed))
             ->count();
 
-        $total_unreserved = User::where('group_id', UserGroup::Student)
+        $total_unreserved = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])
             ->whereNotIn('id', Reservation::select('advisee_id')
                 ->whereIn('timeslot_id', Timeslot::select('id')
                     ->where('period_id', $period->id)
@@ -1160,7 +1160,7 @@ class User extends Authenticatable
         $stats = [];
 
         $stats['total_advisee'] = User::select('id')
-            ->where('group_id', UserGroup::Student)
+            ->whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])
             ->count();
 
         $lastPeriod = Period::orderBy('start_date', 'desc')->first();
@@ -1194,7 +1194,7 @@ class User extends Authenticatable
             ->where('status_id', ReservationStatuses::Missed))
             ->count();
 
-        $total_unreserved = User::where('group_id', UserGroup::Student)
+        $total_unreserved = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])
             ->whereNotIn('id', Reservation::select('advisee_id')
                 ->whereIn('timeslot_id', Timeslot::select('id')
                     ->where('period_id', $lastPeriod->id)

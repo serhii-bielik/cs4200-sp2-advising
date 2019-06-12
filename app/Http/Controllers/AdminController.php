@@ -72,7 +72,7 @@ class AdminController extends Controller
     {
         $this->isAdmin();
 
-        $students = User::where('group_id', UserGroup::Student)->get();
+        $students = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->get();
 
         return view('admin.students.list', compact('students'));
     }

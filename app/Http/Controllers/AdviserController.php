@@ -41,7 +41,7 @@ class AdviserController extends Controller
 
         $studentId = intval(request('studentId'));
 
-        $student = User::where('group_id', UserGroup::Student)->where('id', $studentId)->first();
+        $student = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->where('id', $studentId)->first();
         $student->faculty;
         $student->reservation;
 
@@ -90,7 +90,7 @@ class AdviserController extends Controller
         $this->isAdviser();
 
         $studentId = intval(request('studentId'));
-        return User::where('group_id', UserGroup::Student)->where('id', $studentId)->first()->publicNotes;
+        return User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->where('id', $studentId)->first()->publicNotes;
     }
 
     public function addPublicNote()
@@ -104,7 +104,7 @@ class AdviserController extends Controller
 
         $adviser->addPublicNote($studentId, $note);
 
-        return User::where('group_id', UserGroup::Student)->where('id', $studentId)->first()->publicNotes;
+        return User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->where('id', $studentId)->first()->publicNotes;
     }
 
     public function removePublicNote()
@@ -113,7 +113,7 @@ class AdviserController extends Controller
 
         $studentId = intval(request('student_id'));
 
-        $student = User::where('group_id', UserGroup::Student)->where('id', $studentId)->first();
+        $student = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->where('id', $studentId)->first();
         if (!isset($student)) {
             return response()->json(['error' => 'Student does not exists.'], 400);
         }
@@ -132,7 +132,7 @@ class AdviserController extends Controller
         $this->isAdviser();
 
         $studentId = intval(request('studentId'));
-        return User::where('group_id', UserGroup::Student)->where('id', $studentId)->first()->privateNotes;
+        return User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->where('id', $studentId)->first()->privateNotes;
     }
 
     public function addPrivateNote()
@@ -146,7 +146,7 @@ class AdviserController extends Controller
 
         $adviser->addPrivateNote($studentId, $note);
 
-        return User::where('group_id', UserGroup::Student)->where('id', $studentId)->first()->privateNotes;
+        return User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->where('id', $studentId)->first()->privateNotes;
     }
 
     public function removePrivateNote()
@@ -155,7 +155,7 @@ class AdviserController extends Controller
 
         $studentId = intval(request('student_id'));
 
-        $student = User::where('group_id', UserGroup::Student)->where('id', $studentId)->first();
+        $student = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->where('id', $studentId)->first();
         if (!isset($student)) {
             return response()->json(['error' => 'Student does not exists.'], 400);
         }

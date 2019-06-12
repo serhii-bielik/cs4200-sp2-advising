@@ -99,7 +99,7 @@ class DirectorController extends Controller
 
         $studentId = intval(request('studentId'));
 
-        $student = User::where('group_id', UserGroup::Student)
+        $student = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])
             ->where('id', $studentId)
             ->with('faculty', 'reservation', 'adviser', 'publicNotes')
             ->first();
@@ -121,7 +121,7 @@ class DirectorController extends Controller
 
     private function getUnassignedStudents()
     {
-        return User::where('group_id', UserGroup::Student)
+        return User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])
             ->with('faculty')
             ->doesntHave('studentAdviser')
             ->get();
@@ -129,7 +129,7 @@ class DirectorController extends Controller
 
     public function getAssignedStudents()
     {
-        $students = User::where('group_id', UserGroup::Student)
+        $students = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])
             ->with('adviser', 'faculty')
             ->has('adviser')
             ->get()
