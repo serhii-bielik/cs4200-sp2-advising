@@ -11,6 +11,8 @@
     <form method="post" action="{{ url('/admin/students') }}" enctype="multipart/form-data">
         {{ csrf_field() }}
 
+        <p>Sample file format: <strong><a href="{{ url('/samples/students.xlsx') }}">students.xlsx</a></strong></p>
+
         <div class="form-group">
             <label for="students">Select file with students:</label>
             <input type="file" required name="students">

@@ -9,7 +9,10 @@
     <form method="post" action="{{ url('/admin/userRemoval') }}" enctype="multipart/form-data">
         {{ csrf_field() }}
 
-        <p class="text-danger"><strong>All provided users and data related to them will be permanently removed.</strong></p>
+        <p>
+            <strong><span class="text-danger">All provided users and data related to them will be permanently removed.</span></strong><br>
+            Sample file format: <strong><a href="{{ url('/samples/users.xlsx') }}">users.xlsx</a></strong>
+        </p>
         <div class="form-group">
             <label for="users">Select file with users to remove:</label>
             <input type="file" required name="users">
