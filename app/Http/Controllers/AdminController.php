@@ -47,11 +47,11 @@ class AdminController extends Controller
         return back();
     }
 
-    public function main()
+    public function system()
     {
         $this->isAdmin();
 
-        return view('admin.main');
+        return view('admin.system');
     }
 
     public function systemReset()
