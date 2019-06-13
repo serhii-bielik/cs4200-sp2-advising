@@ -13,7 +13,7 @@
 
         <div class="form-group">
             <label for="students">Select file with students:</label>
-            <input type="file" name="students">
+            <input type="file" required name="students">
         </div>
 
         <button type="submit" class="btn btn-default">
@@ -65,4 +65,56 @@
         @endif
     </div>
 
+    <!-- Modal -->
+    <div id="editUser" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit User Details</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="uname">Name:</label>
+                        <input type="text" required class="form-control" id="uname">
+                    </div>
+                    <div class="form-group">
+                        <label for="auid">AU ID:</label>
+                        <input type="text" required class="form-control" id="auid">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" required class="form-control" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="group">Group:</label>
+                        <select class="form-control" id="group">
+                            @foreach($groups as $group)
+                                <option value="{{ $group->id }}">{{ $group->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="faculty">Faculty:</label>
+                        <select class="form-control" id="faculty">
+                            @foreach($faculties as $faculty)
+                                <option value="{{ $faculty->id }}">{{ $faculty->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <input type="hidden" required class="form-control" id="uid">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success" onclick="updateUser()">
+                        <span class="glyphicon glyphicon-ok"></span> Save
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 @endsection

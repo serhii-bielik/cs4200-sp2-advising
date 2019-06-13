@@ -100,7 +100,7 @@ class LoginController extends Controller
             session()->flash('message', "Admin user was successfully added.");
             session()->flash('alert-class', 'alert-success');
 
-            return redirect()->to('admin/advisers');
+            return redirect()->to('admin');
 
         } else {
 
@@ -135,7 +135,7 @@ class LoginController extends Controller
                 auth()->login($existingUser, true);
 
                 if ($existingUser->group_id == UserGroup::Admin) {
-                    return redirect()->to('admin/advisers');
+                    return redirect()->to('admin');
                 }
 
             } else {

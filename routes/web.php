@@ -108,6 +108,8 @@ Route::post('/admin', 'AdminController@advisersUpload');
 Route::get('/admin/system', 'AdminController@system');
 Route::get('/admin/systemReset', 'AdminController@systemReset');
 Route::post('/admin/removeUser', 'AdminController@removeUser');
+Route::get('/admin/userRemoval', 'AdminController@massUserRemoval');
+Route::post('/admin/userRemoval', 'AdminController@massUserRemovalUpload');
 Route::get('/admin/userData/{userId}', 'AdminController@userData');
 Route::post('/admin/userData', 'AdminController@updateUserData');
 Route::get('/admin/students', 'AdminController@students');

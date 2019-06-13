@@ -7,6 +7,7 @@ use App\Group;
 use App\Imports\AdvisersImport;
 use App\Imports\StudentAdviserRelationImport;
 use App\Imports\StudentsImport;
+use App\Imports\UserMassRemovalImport;
 use App\User;
 use App\UserGroup;
 use Illuminate\Http\Request;
@@ -223,6 +224,24 @@ class AdminController extends Controller
         } catch (\Exception $message) {
             return response()->json(['error' => $message->getMessage()], 400);
         }
+    }
+
+    public function massUserRemoval()
+    {
+        $this->isAdmin();
+
+        return view('admin.massRemoval');
+    }
+
+    public function massUserRemovalUpload()
+    {
+        $this->isAdmin();
+
+        $file = request()->file('users')->store('uploads');
+
+        Excel::import(new UserMassRemovalImport, $file);
+
+        return back();
     }
 
     public function studentSuspend()
