@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('title')
-    Mass Users Removal
+    Mass User Removal
 @endsection
 
 @section('content')
