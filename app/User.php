@@ -1001,6 +1001,7 @@ class User extends Authenticatable
             ->get()
             ->toArray();
 
+        $users = [];
         for ($i = 0; $i < count($reservations); $i++) {
             if (isset($reservations[$i]['student_for_report']['adviser'][0])) {
                 $reservations[$i]['student_for_report']['adviser'] = $reservations[$i]['student_for_report']['adviser'][0];
@@ -1009,10 +1010,11 @@ class User extends Authenticatable
             }
 
             $reservations[$i]['student'] = $reservations[$i]['student_for_report'];
+            $users[] = $reservations[$i]['student'];
             unset($reservations[$i]['student_for_report']);
         }
 
-        return $reservations;
+        return $users;
     }
 
     public function getDirectorStatsForPeriodCancelled($periodId)
@@ -1029,6 +1031,7 @@ class User extends Authenticatable
             ->get()
             ->toArray();
 
+        $users = [];
         for ($i = 0; $i < count($reservations); $i++) {
             if (isset($reservations[$i]['student_for_report']['adviser'][0])) {
                 $reservations[$i]['student_for_report']['adviser'] = $reservations[$i]['student_for_report']['adviser'][0];
@@ -1037,10 +1040,11 @@ class User extends Authenticatable
             }
 
             $reservations[$i]['student'] = $reservations[$i]['student_for_report'];
+            $users[] = $reservations[$i]['student'];
             unset($reservations[$i]['student_for_report']);
         }
 
-        return $reservations;
+        return $users;
     }
 
     public function getDirectorStatsForPeriodMissed($periodId)
@@ -1057,6 +1061,7 @@ class User extends Authenticatable
             ->get()
             ->toArray();
 
+        $users = [];
         for ($i = 0; $i < count($reservations); $i++) {
             if (isset($reservations[$i]['student_for_report']['adviser'][0])) {
                 $reservations[$i]['student_for_report']['adviser'] = $reservations[$i]['student_for_report']['adviser'][0];
@@ -1065,10 +1070,11 @@ class User extends Authenticatable
             }
 
             $reservations[$i]['student'] = $reservations[$i]['student_for_report'];
+            $users[] = $reservations[$i]['student'];
             unset($reservations[$i]['student_for_report']);
         }
 
-        return $reservations;
+        return $users;
     }
 
     public function getDirectorStatsForPeriodReserved($periodId)
@@ -1085,6 +1091,7 @@ class User extends Authenticatable
             ->get()
             ->toArray();
 
+        $users = [];
         for ($i = 0; $i < count($reservations); $i++) {
             if (isset($reservations[$i]['student_for_report']['adviser'][0])) {
                 $reservations[$i]['student_for_report']['adviser'] = $reservations[$i]['student_for_report']['adviser'][0];
@@ -1093,10 +1100,11 @@ class User extends Authenticatable
             }
 
             $reservations[$i]['student'] = $reservations[$i]['student_for_report'];
+            $users[] = $reservations[$i]['student'];
             unset($reservations[$i]['student_for_report']);
         }
 
-        return $reservations;
+        return $users;
     }
 
     public function getDirectorStatsForPeriod($periodId)
