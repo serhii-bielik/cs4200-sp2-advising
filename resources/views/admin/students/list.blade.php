@@ -32,7 +32,9 @@
                     <th class="text-center">AU ID</th>
                     <th class="text-center">Name</th>
                     <th class="text-center">Email</th>
-                    <th class="text-center"></th>
+                    <th class="text-center">Group</th>
+                    <th class="text-center">Faculty</th>
+                    <th class="text-center">Manage</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -41,7 +43,18 @@
                         <td class="text-center">{{ $student->au_id }}</td>
                         <td>{{ $student->name }}</td>
                         <td>{{ 'u' . $student->au_id . '@au.edu' }}</td>
-                        <td class="text-center"> - </td>
+                        <td class="text-center">{{ $student->group->name }}</td>
+                        <td class="text-center">{{ $student->faculty->code }}</td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-info btn-xs"
+                                    onclick="editUser({{ $student->id }})">
+                                <span class=" 	glyphicon glyphicon-pencil"></span> Edit
+                            </button>&nbsp;
+                            <button type="button" class="btn btn-danger btn-xs"
+                                    onclick="rmUser({{ $student->id }})">
+                                <span class="glyphicon glyphicon-remove"></span> Remove
+                            </button>
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>

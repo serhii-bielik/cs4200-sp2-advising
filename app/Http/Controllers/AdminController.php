@@ -156,9 +156,15 @@ class AdminController extends Controller
     {
         $this->isAdmin();
 
-        $students = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])->get();
+        $students = User::whereIn('group_id', [UserGroup::Student, UserGroup::Inactive])
+            ->with('faculty', 'group')
+            ->get();
 
-        return view('admin.students.list', compact('students'));
+        $faculties = Faculty::all();
+        $groups = Group::whereIn('id', [UserGroup::Inactive, UserGroup::Student])
+            ->get();
+
+        return view('admin.students.list', compact('students', 'faculties', 'groups'));
     }
 
     public function studentsUpload()
